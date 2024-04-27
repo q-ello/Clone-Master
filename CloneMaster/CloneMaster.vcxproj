@@ -132,22 +132,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Utilities\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Room.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Models\Room.cpp" />
+    <ClCompile Include="Utilities\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="Function.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Directions.h" />
+    <ClInclude Include="Models\Character.h" />
+    <ClInclude Include="Models\Trigger.h" />
+    <ClInclude Include="Utilities\Function.h" />
+    <ClInclude Include="Utilities\Input.h" />
+    <ClInclude Include="Utilities\Directions.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Inventory.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="Squad.h" />
-    <ClInclude Include="Room.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Models\Store.h" />
+    <ClInclude Include="Models\Item.h" />
+    <ClInclude Include="Models\Room.h" />
+    <ClInclude Include="Utilities\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

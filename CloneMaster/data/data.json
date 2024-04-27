@@ -3,48 +3,54 @@
   "rooms": [
     {
       "name": "Cell",
-      "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.\n",
+      "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.",
       "exits": [
         {
           "name": "Hideout",
-          "direction": "down",
-          "ToBeOpened": null
+          "direction": "down"
         },
         {
           "name": "Hallway 2",
           "direction": "north",
-          "ToBeOpened": "Cell Key"
+          "available": false
         }
       ],
       "items": [
         {
           "name": "Cigarettes",
-          "description": "You don't have the healthiest habits. Neither does the guard, Andrew.",
-          "InRoomDescription": "There is a pack of cigarettes laying around.",
-          "takeable": true,
-          "IsTaken": false
+          "clue": "You don't have the healthiest habits. Neither does the guard, Andrew.",
+          "description": "There is a pack of cigarettes laying around."
         },
         {
           "name": "shard",
-          "desription": "A shard of a ceramic plate. It is sharp.",
-          "InRoomDescription": "You see a sharp ceramic shard.",
-          "takeable": true,
-          "IsTaken": false
-        },
+          "clue": "A shard of a ceramic plate. It is sharp.",
+          "description": "You see a sharp ceramic shard.",
+          "available": false
+        }
+      ],
+      "triggers": [
         {
-          "name": "Garbage",
-          "description": "There is a shard of a ceramic plate in garbage. It is sharp.",
-          "takeable": false
+          "name": "door",
+          "clue": "A barred door. You can't squeeze through bars, but you can reach your hand out.",
+          "trigger": {
+            "type": "exit",
+            "name": "Hallway 2",
+            "action": "open",
+            "key": "Cell Key"
+          }
         },
         {
           "name": "hole",
-          "description": "A hole leads down to a hideout you've made while the guards weren't looking.",
-          "takeable": false
+          "description": "A hole leads down to a hideout you've made while the guards weren't looking."
         },
         {
-          "name": "door",
-          "description": "A barred door. You can't squeeze through bars, but you can reach your hand out.",
-          "takeable": false
+          "name": "Garbage",
+          "clue": "There is a shard of a ceramic plate in garbage. It is sharp.",
+          "trigger": {
+            "type": "item",
+            "name": "shard",
+            "action": "examine"
+          }
         }
       ]
     },
@@ -54,34 +60,35 @@
       "exits": [
         {
           "name": "Cell",
-          "direction": "west",
-          "ToBeOpened": null
+          "direction": "west"
         },
         {
           "name": "Staff",
           "direction": "up",
-          "ToBeOpened": null
+          "available": false
         }
       ],
       "items": [
         {
           "name": "Lighter",
-          "description": "In a place like this, you need a spark in your life.",
-          "InRoomDescription": "You see your lighter.",
-          "takeable": true,
-          "IsTaken": false
+          "clue": "In a place like this, you need a spark in your life.",
+          "description": "You see your lighter."
         },
         {
           "name": "Sedatives",
-          "description": "Take enough of these and you will sleep soundly.",
-          "InRoomDescription": "You see sedatives you've snuck into the prison.",
-          "takeable": true,
-          "IsTaken": false
-        },
+          "clue": "Take enough of these and you will sleep soundly.",
+          "description": "You see sedatives you've snuck into the prison."
+        }
+      ],
+      "triggers": [
         {
           "name": "Periodic Table",
-          "description": "You move the table, accessing a ventilation leading upwards.",
-          "takeable": false
+          "clue": "You move the table, accessing a ventilation leading upwards.",
+          "trigger": {
+            "type": "exit",
+            "name": "Staff",
+            "action": "examine"
+          }
         }
       ]
     },
@@ -91,37 +98,33 @@
       "exits": [
         {
           "name": "Hideout",
-          "direction": "down",
-          "ToBeOpened": null
+          "direction": "down"
         },
         {
           "name": "2nd floor",
           "direction": "east",
-          "ToBeOpened": "Fingerprint"
+          "available": false
         }
       ],
       "items": [
         {
           "name": "Duct tape",
-          "description": "You have some troubles finding the edge of the tape, but you manage to do it.",
-          "InRoomDescription": "You see duct tape.",
-          "takeable": true,
-          "IsTaken": false
-        },
+          "clue": "You have some troubles finding the edge of the tape, but you manage to do it.",
+          "description": "You see duct tape."
+        }
+      ],
+      "triggers": [
         {
           "name": "Table",
-          "description": "An office desk.",
-          "takeable": false
+          "clue": "An office desk."
         },
         {
           "name": "Lockers",
-          "description": "You see Andrew's locker, Bob's locker and Kevin's locker.",
-          "takeable": false
+          "clue": "You see Andrew's locker, Bob's locker and Kevin's locker."
         },
         {
           "name": "Andrew's locker",
-          "description": "You find a pack of sclerosis pills and a LOT of reminders. Great.",
-          "takeable": false
+          "clue": "You find a pack of sclerosis pills and a LOT of reminders. Great."
         }
       ]
     },
@@ -131,12 +134,11 @@
         {
           "name": "Storage",
           "direction": "north",
-          "ToBeOpened": "Password"
+          "available": false
         },
         {
           "name": "Hallway 2",
-          "direction": "east",
-          "ToBeOpened": null
+          "direction": "east"
         }
       ]
     },
@@ -146,17 +148,15 @@
         {
           "name": "Cell",
           "direction": "south",
-          "ToBeOpened": "Cell Key"
+          "available": false
         },
         {
           "name": "Hallway 1",
-          "direction": "west",
-          "ToBeOpened": null
+          "direction": "west"
         },
         {
           "name": "Hallway 3",
-          "direction": "east",
-          "ToBeOpened": null
+          "direction": "east"
         }
       ]
     },
@@ -166,12 +166,11 @@
         {
           "name": "2nd floor",
           "direction": "west",
-          "ToBeOpened": "Fingerprint"
+          "available": false
         },
         {
           "name": "Hallway 2",
-          "direction": "east",
-          "ToBeOpened": null
+          "direction": "east"
         }
       ]
     },
@@ -181,7 +180,7 @@
         {
           "name": "Hallway 1",
           "direction": "south",
-          "ToBeOpened": "Password"
+          "available": false
         }
       ]
     }

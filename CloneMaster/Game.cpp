@@ -32,14 +32,7 @@ void Game::run()
 		std::cout << "\n>";
 		Instruction inst = Input::ReadUser();
 		std::cout << std::endl;
-		if (inst.function != F_NONE)
-		{
-			updateState(inst);
-		}
-		else
-		{
-			std::cout << "Excuse you?\n";
-		}
+		updateState(inst);
 	}
 }
 
@@ -69,7 +62,20 @@ void Game::updateState(Instruction instruction)
 	case F_RESTORE:
 		restore();
 		break;
+	case F_LOOK:
+		currentRoom_->printRoomInfo();
+		break;
+	case F_HELP:
+		help();
+		break;
+	case F_TAKE:
+		take(instruction.goal);
+		break;
+	case F_INVENTORY:
+		printInventory();
+		break;
 	default:
+		std::cout << "Excuse you?\n";
 		break;
 	}
 }
@@ -103,16 +109,39 @@ void Game::save()
 		json roomJson;
 		roomJson["name"] = room->getName();
 		roomJson["description"] = room->getDescription();
+
 		json exitsJson;
-		for (const auto& [direction, name] : room->getExits())
+		for (const auto& [direction, exit] : room->getExits())
 		{
 			json exitJson;
 			exitJson["direction"] = DirectionsToString.at(direction);
-			exitJson["name"] = name;
+			exitJson["name"] = exit.name;
+			if (!exit.available)
+			{
+				exitJson["available"] = false;
+			}
 			exitsJson.push_back(exitJson);
 		}
 		roomJson.emplace("exits", exitsJson);
+
+		json itemsJson;
+
+		for (const auto& item : room->getItems())
+		{
+			json itemJson;
+			itemJson["name"] = item->getName();
+			itemJson["description"] = item->getDescription();
+			itemJson["clue"] = item->getClue();
+			if (!item->isAvailable())
+			{
+				itemJson["available"] = false;
+			}
+			itemsJson.push_back(itemJson);
+		}
+		roomJson.emplace("items", itemsJson);
+
 		roomsJson.push_back(roomJson);
+
 	}
 	j.emplace("rooms", roomsJson);
 
@@ -150,11 +179,77 @@ void Game::parseData(json data)
 		Room* newRoom = new Room(name, description);
 		for (auto& exitJson : roomJson.at("exits"))
 		{
-			newRoom->addExit(DirectionsToEnum.at(exitJson.at("direction")), exitJson.at("name"));
+			newRoom->addExit(DirectionsToEnum.at(exitJson.at("direction")), 
+				exitJson.at("name"), 
+				exitJson.find("available") == exitJson.end());
+		}
+		if (roomJson.contains("items"))
+		{
+			for (auto& itemJson : roomJson.at("items"))
+			{
+				std::string name = itemJson.at("name");
+				std::string description = itemJson.at("description");
+				std::string clue = itemJson.at("clue");
+				bool available = itemJson.find("available") == itemJson.end();
+				newRoom->addItem(new Item(name, description, clue, available));
+			}
 		}
 
 		rooms_[name] = newRoom;
 	}
 
 	currentRoom_ = rooms_.at(data.at("current"));
+}
+
+void Game::help()
+{
+	std::cout << "- help/? - see help" << std::endl;
+	std::cout << "- go north/go n/north/n - go north, and etc for east/south/west/up/down" << std::endl;
+	std::cout << "- good news, you can save your progress! to do that type 'save'" << std::endl;
+	std::cout << "- restore - restore your progress" << std::endl;
+	std::cout << "- l/look - look around the room you currently in" << std::endl;
+	std::cout << "- i/inventory - look in your inventory" << std::endl;
+	//std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
+	std::cout << "- take/pick up smth - put something in your inventory" << std::endl;
+	//TODO drop
+	//TODO help
+	//TODO quit
+	//TODO examine
+	//TODO clone
+	//TODO leave
+	//TODO equip
+	//TODO unequip
+	std::cout << "P.S. so, I know you're all lazy like me and don't wanna type long names. so don't. one word is enough, really" << std::endl;
+}
+
+void Game::take(std::string item)
+{
+	if (inventory_.isFull())
+	{
+		std::cout << "You already have too much items in your inventory.\n";
+		return;
+	}
+
+	Item* neededItem = currentRoom_->getItemByName(item);
+
+	if (neededItem == nullptr)
+	{
+		std::cout << "You cannot take " << item << std::endl;
+		return;
+	}
+
+	inventory_.addEntity(std::move(neededItem));
+	std::cout << "Taken.\n";
+}
+
+void Game::printInventory()
+{
+	if (inventory_.isEmpty())
+	{
+		std::cout << "You have nothing.\n";
+		return;
+	}
+
+	std::cout << "Here are the items you possess:" << std::endl;
+	inventory_.printInfo();
 }

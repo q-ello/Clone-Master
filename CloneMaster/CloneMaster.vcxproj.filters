@@ -30,13 +30,13 @@
     <ClCompile Include="Game.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="Utilities\Input.cpp">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Room.cpp">
+    <ClCompile Include="Models\Room.cpp">
       <Filter>Исходные файлы\Models</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="Utilities\Utils.cpp">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,32 +44,32 @@
     <ClInclude Include="Game.h">
       <Filter>Исходные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Исходные файлы\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Directions.h">
+    <ClInclude Include="Utilities\Directions.h">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h">
+    <ClInclude Include="Utilities\Function.h">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="Utilities\Input.h">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Inventory.h">
+    <ClInclude Include="Models\Store.h">
       <Filter>Исходные файлы\Loot</Filter>
     </ClInclude>
-    <ClInclude Include="Item.h">
+    <ClInclude Include="Models\Item.h">
       <Filter>Исходные файлы\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Room.h">
+    <ClInclude Include="Models\Room.h">
       <Filter>Исходные файлы\Models</Filter>
     </ClInclude>
-    <ClInclude Include="Squad.h">
-      <Filter>Исходные файлы\Loot</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="Utilities\Utils.h">
       <Filter>Исходные файлы\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\Character.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\Trigger.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

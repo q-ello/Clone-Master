@@ -1,0 +1,146 @@
+{
+    "current": "Cell",
+    "rooms": [
+        {
+            "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.",
+            "exits": [
+                {
+                    "available": false,
+                    "direction": "north",
+                    "name": "Hallway 2"
+                },
+                {
+                    "direction": "down",
+                    "name": "Hideout"
+                }
+            ],
+            "items": [
+                {
+                    "clue": "You don't have the healthiest habits. Neither does the guard, Andrew.",
+                    "description": "There is a pack of cigarettes laying around.",
+                    "name": "Cigarettes"
+                },
+                {
+                    "available": false,
+                    "clue": "A shard of a ceramic plate. It is sharp.",
+                    "description": "You see a sharp ceramic shard.",
+                    "name": "shard"
+                }
+            ],
+            "name": "Cell"
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "available": false,
+                    "direction": "north",
+                    "name": "Storage"
+                },
+                {
+                    "direction": "east",
+                    "name": "Hallway 2"
+                }
+            ],
+            "items": null,
+            "name": "Hallway 1"
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "east",
+                    "name": "Hallway 3"
+                },
+                {
+                    "available": false,
+                    "direction": "south",
+                    "name": "Cell"
+                },
+                {
+                    "direction": "west",
+                    "name": "Hallway 1"
+                }
+            ],
+            "items": null,
+            "name": "Hallway 2"
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "east",
+                    "name": "Hallway 2"
+                },
+                {
+                    "available": false,
+                    "direction": "west",
+                    "name": "2nd floor"
+                }
+            ],
+            "items": null,
+            "name": "Hallway 3"
+        },
+        {
+            "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things. A periodic table of elements hangs on the wall.",
+            "exits": [
+                {
+                    "direction": "west",
+                    "name": "Cell"
+                },
+                {
+                    "available": false,
+                    "direction": "up",
+                    "name": "Staff"
+                }
+            ],
+            "items": [
+                {
+                    "clue": "In a place like this, you need a spark in your life.",
+                    "description": "You see your lighter.",
+                    "name": "Lighter"
+                },
+                {
+                    "clue": "Take enough of these and you will sleep soundly.",
+                    "description": "You see sedatives you've snuck into the prison.",
+                    "name": "Sedatives"
+                }
+            ],
+            "name": "Hideout"
+        },
+        {
+            "description": "You climb up the ventilation, accessing the staff room. Luckily, no one is here.\nYou have climbed up to the second floor. The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+            "exits": [
+                {
+                    "available": false,
+                    "direction": "east",
+                    "name": "2nd floor"
+                },
+                {
+                    "direction": "down",
+                    "name": "Hideout"
+                }
+            ],
+            "items": [
+                {
+                    "clue": "You have some troubles finding the edge of the tape, but you manage to do it.",
+                    "description": "You see duct tape.",
+                    "name": "Duct tape"
+                }
+            ],
+            "name": "Staff"
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "available": false,
+                    "direction": "south",
+                    "name": "Hallway 1"
+                }
+            ],
+            "items": null,
+            "name": "Storage"
+        }
+    ]
+}

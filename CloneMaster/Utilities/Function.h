@@ -1,0 +1,24 @@
+#pragma once
+
+enum Function
+{
+	F_GO,
+	F_NONE,
+	F_TAKE,
+	F_DROP,
+	F_INVENTORY,
+	F_SQUAD,
+	F_SAVE,
+	F_RESTORE,
+	F_TALK,
+	F_CLONE,
+	F_EQUIP,
+	F_UNEQUIP,
+	F_OPEN,
+	F_HEAL,
+	F_LEAVE,
+	F_SUMMON,
+	F_LOOK,
+	F_HELP
+};
+
