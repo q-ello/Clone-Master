@@ -1,0 +1,189 @@
+{
+  "start": "Cell",
+  "rooms": [
+    {
+      "name": "Cell",
+      "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.\n",
+      "exits": [
+        {
+          "name": "Hideout",
+          "direction": "down",
+          "ToBeOpened": null
+        },
+        {
+          "name": "Hallway 2",
+          "direction": "north",
+          "ToBeOpened": "Cell Key"
+        }
+      ],
+      "items": [
+        {
+          "name": "Cigarettes",
+          "description": "You don't have the healthiest habits. Neither does the guard, Andrew.",
+          "InRoomDescription": "There is a pack of cigarettes laying around.",
+          "takeable": true,
+          "IsTaken": false
+        },
+        {
+          "name": "shard",
+          "desription": "A shard of a ceramic plate. It is sharp.",
+          "InRoomDescription": "You see a sharp ceramic shard.",
+          "takeable": true,
+          "IsTaken": false
+        },
+        {
+          "name": "Garbage",
+          "description": "There is a shard of a ceramic plate in garbage. It is sharp.",
+          "takeable": false
+        },
+        {
+          "name": "hole",
+          "description": "A hole leads down to a hideout you've made while the guards weren't looking.",
+          "takeable": false
+        },
+        {
+          "name": "door",
+          "description": "A barred door. You can't squeeze through bars, but you can reach your hand out.",
+          "takeable": false
+        }
+      ]
+    },
+    {
+      "name": "Hideout",
+      "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things. A periodic table of elements hangs on the wall.",
+      "exits": [
+        {
+          "name": "Cell",
+          "direction": "west",
+          "ToBeOpened": null
+        },
+        {
+          "name": "Staff",
+          "direction": "up",
+          "ToBeOpened": null
+        }
+      ],
+      "items": [
+        {
+          "name": "Lighter",
+          "description": "In a place like this, you need a spark in your life.",
+          "InRoomDescription": "You see your lighter.",
+          "takeable": true,
+          "IsTaken": false
+        },
+        {
+          "name": "Sedatives",
+          "description": "Take enough of these and you will sleep soundly.",
+          "InRoomDescription": "You see sedatives you've snuck into the prison.",
+          "takeable": true,
+          "IsTaken": false
+        },
+        {
+          "name": "Periodic Table",
+          "description": "You move the table, accessing a ventilation leading upwards.",
+          "takeable": false
+        }
+      ]
+    },
+    {
+      "name": "Staff",
+      "description": "You climb up the ventilation, accessing the staff room. Luckily, no one is here.\nYou have climbed up to the second floor. The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+      "exits": [
+        {
+          "name": "Hideout",
+          "direction": "down",
+          "ToBeOpened": null
+        },
+        {
+          "name": "2nd floor",
+          "direction": "east",
+          "ToBeOpened": "Fingerprint"
+        }
+      ],
+      "items": [
+        {
+          "name": "Duct tape",
+          "description": "You have some troubles finding the edge of the tape, but you manage to do it.",
+          "InRoomDescription": "You see duct tape.",
+          "takeable": true,
+          "IsTaken": false
+        },
+        {
+          "name": "Table",
+          "description": "An office desk.",
+          "takeable": false
+        },
+        {
+          "name": "Lockers",
+          "description": "You see Andrew's locker, Bob's locker and Kevin's locker.",
+          "takeable": false
+        },
+        {
+          "name": "Andrew's locker",
+          "description": "You find a pack of sclerosis pills and a LOT of reminders. Great.",
+          "takeable": false
+        }
+      ]
+    },
+    {
+      "name": "Hallway 1",
+      "exits": [
+        {
+          "name": "Storage",
+          "direction": "north",
+          "ToBeOpened": "Password"
+        },
+        {
+          "name": "Hallway 2",
+          "direction": "east",
+          "ToBeOpened": null
+        }
+      ]
+    },
+    {
+      "name": "Hallway 2",
+      "exits": [
+        {
+          "name": "Cell",
+          "direction": "south",
+          "ToBeOpened": "Cell Key"
+        },
+        {
+          "name": "Hallway 1",
+          "direction": "west",
+          "ToBeOpened": null
+        },
+        {
+          "name": "Hallway 3",
+          "direction": "east",
+          "ToBeOpened": null
+        }
+      ]
+    },
+    {
+      "name": "Hallway 3",
+      "exits": [
+        {
+          "name": "2nd floor",
+          "direction": "west",
+          "ToBeOpened": "Fingerprint"
+        },
+        {
+          "name": "Hallway 2",
+          "direction": "east",
+          "ToBeOpened": null
+        }
+      ]
+    },
+    {
+      "name": "Storage",
+      "exits": [
+        {
+          "name": "Hallway 1",
+          "direction": "south",
+          "ToBeOpened": "Password"
+        }
+      ]
+    }
+  ]
+}
