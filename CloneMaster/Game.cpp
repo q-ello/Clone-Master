@@ -1,9 +1,7 @@
 #include "Game.h"
-
 #include <fstream>
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 #include <iostream>
+#include <filesystem>
 
 void Game::play()
 {
@@ -18,26 +16,7 @@ void Game::initWorld()
 {
 	std::ifstream f("data/data.json");
 	json data = json::parse(f);
-
-	for (auto& roomJson : data.at("rooms"))
-	{
-		std::string name = roomJson.at("name");
-		auto descIt = roomJson.find("description");
-		std::string description = "";
-		if (descIt != roomJson.end())
-		{
-			description = *descIt;
-		}
-		Room* newRoom = new Room(name, description);
-		for (auto& exitJson : roomJson.at("exits"))
-		{
-			newRoom->addExit(DirectionsMapped.at(exitJson.at("direction")), exitJson.at("name"));
-		}
-
-		rooms_[name] = newRoom;
-	}
-
-	currentRoom_ = rooms_.at(data.at("start"));
+	parseData(data);
 }
 
 void Game::run()
@@ -52,6 +31,7 @@ void Game::run()
 	{
 		std::cout << "\n>";
 		Instruction inst = Input::ReadUser();
+		std::cout << std::endl;
 		if (inst.function != F_NONE)
 		{
 			updateState(inst);
@@ -83,6 +63,12 @@ void Game::updateState(Instruction instruction)
 	case F_GO:
 		go(instruction.goal);
 		break;
+	case F_SAVE:
+		save();
+		break;
+	case F_RESTORE:
+		restore();
+		break;
 	default:
 		break;
 	}
@@ -90,53 +76,85 @@ void Game::updateState(Instruction instruction)
 
 void Game::go(const std::string& direction)
 {
-	bool canGo = true;
 	Direction dir;
-	if (direction.length() == 1)
+	if (!DirectionsToEnum.contains(direction))
 	{
-		switch (direction[0])
+		std::cout << "You can't go that way.\n";
+		return;
+	}
+	dir = DirectionsToEnum[direction];
+
+	std::string id;
+	if (currentRoom_->getExitId(dir, id))
+	{
+		currentRoom_ = rooms_[id];
+		currentRoom_->printRoomInfo();
+	}
+}
+
+void Game::save()
+{
+	std::ofstream f("data/savefile.json");
+	json j;
+	j["current"] = currentRoom_->getName();
+	json roomsJson;
+	for (const auto& [key, room] : rooms_)
+	{
+		json roomJson;
+		roomJson["name"] = room->getName();
+		roomJson["description"] = room->getDescription();
+		json exitsJson;
+		for (const auto& [direction, name] : room->getExits())
 		{
-		case 'n':
-			dir = DirectionsMapped.at("north");
-			break;
-		case 'e':
-			dir = DirectionsMapped.at("east");
-			break;
-		case 's':
-			dir = DirectionsMapped.at("south");
-			break;
-		case 'w':
-			dir = DirectionsMapped.at("west");
-			break;
-		case 'u':
-			dir = DirectionsMapped.at("up");
-			break;
-		case 'd':
-			dir = DirectionsMapped.at("down");
-			break;
-		default:
-			canGo = false;
-			break;
+			json exitJson;
+			exitJson["direction"] = DirectionsToString.at(direction);
+			exitJson["name"] = name;
+			exitsJson.push_back(exitJson);
 		}
+		roomJson.emplace("exits", exitsJson);
+		roomsJson.push_back(roomJson);
 	}
-	else if (!DirectionsMapped.contains(direction))
+	j.emplace("rooms", roomsJson);
+
+	f << std::setw(4) << j << std::endl;
+
+	std::cout << "Your progress was saved." << std::endl;
+}
+
+void Game::restore()
+{
+	std::ifstream f;
+	f.open("data/savefile.json");
+	if (!f)
 	{
-		canGo = false;
+		std::cout << "You don't have any progress saved.\n";
+		return;
 	}
-	else 
+	json data = json::parse(f);
+	parseData(data);
+	std::cout << "Your progress was restored. Enjoy your game!\n\n";
+	currentRoom_->printRoomInfo();
+}
+
+void Game::parseData(json data)
+{
+	for (auto& roomJson : data.at("rooms"))
 	{
-		dir = DirectionsMapped[direction];
+		std::string name = roomJson.at("name");
+		auto descIt = roomJson.find("description");
+		std::string description = "";
+		if (descIt != roomJson.end())
+		{
+			description = *descIt;
+		}
+		Room* newRoom = new Room(name, description);
+		for (auto& exitJson : roomJson.at("exits"))
+		{
+			newRoom->addExit(DirectionsToEnum.at(exitJson.at("direction")), exitJson.at("name"));
+		}
+
+		rooms_[name] = newRoom;
 	}
 
-	if (canGo)
-	{
-		std::string id;
-		if (currentRoom_->getExitId(dir, id))
-		{
-			currentRoom_ = rooms_[id];
-			currentRoom_->printRoomInfo();
-			return;
-		}
-	}
-	std::cout << "You can't go that way.\n";
+	currentRoom_ = rooms_.at(data.at("current"));
 }

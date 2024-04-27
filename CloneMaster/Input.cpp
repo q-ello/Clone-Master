@@ -50,7 +50,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		}
 		else
 		{
-			std::cout << "Where do you wanna go? Give me some direction.\n\n>";
+			std::cout << "Where do you wanna go?\n>";
 			std::string direction;
 			std::getline(std::cin, direction);
 			inst.function = F_GO;
@@ -101,8 +101,21 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		return;
 	}
 
-	if (n == 1 && command[0] == "i" || command[0] == "inventory") {
+	if (n == 1 && command[0] == "i" || command[0] == "inventory") 
+	{
 		inst.function = F_INVENTORY;
+		return;
+	}
+
+	if (n == 1 && command[0] == "save")
+	{
+		inst.function = F_SAVE;
+		return;
+	}
+
+	if (n == 1 && command[0] == "restore")
+	{
+		inst.function = F_RESTORE;
 		return;
 	}
 
@@ -130,7 +143,5 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	else if (lower.find("examine") != std::string::npos) {
 		return FUNCTION_EXAMINE;
 	}*/
-	else {
-		inst.function = F_NONE;
-	}
+	inst.function = F_NONE;
 }

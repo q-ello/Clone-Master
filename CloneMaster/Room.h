@@ -17,6 +17,8 @@ public:
 		description_{ description }
 	{};
 
+	~Room();
+
 	void addExit(Direction direction, const std::string& room)
 	{
 		exits_[direction] = room;
@@ -24,7 +26,23 @@ public:
 
 	void printRoomInfo();
 
+	//get the name of the room we are going into
 	bool getExitId(Direction dir, std::string& id);
+
+	std::string getName() const
+	{
+		return name_;
+	}
+
+	std::string getDescription() const
+	{
+		return description_;
+	}
+
+	std::map<Direction, std::string> getExits() const
+	{
+		return exits_;
+	}
 
 private:
 	std::string name_;

@@ -7,6 +7,8 @@ enum Function
 	F_TAKE,
 	F_DROP,
 	F_INVENTORY,
-	F_SQUAD
+	F_SQUAD,
+	F_SAVE,
+	F_RESTORE
 };
 
