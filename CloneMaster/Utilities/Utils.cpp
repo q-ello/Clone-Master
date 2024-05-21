@@ -1,10 +1,5 @@
 #include "Utils.h"
 
-#include <locale>
-#include <map>
-#include <algorithm> 
-#include <cctype>
-
 std::string Utils::toLower(const std::string& s)
 {
 	std::string lower = "";
@@ -14,24 +9,26 @@ std::string Utils::toLower(const std::string& s)
 	return lower;
 }
 
-void Utils::toLowerAndTrim(std::string& s)
+std::string Utils::toLowerAndTrim(const std::string& s)
 {
 	if (s.size() > 0)
 	{
-		s = toLower(s);
-		s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+		std::string lowS = toLower(s);
+		lowS.erase(lowS.begin(), std::find_if(lowS.begin(), lowS.end(), [](unsigned char ch) {
 			return !std::isspace(ch);
 			}));
 
-		s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+		lowS.erase(std::find_if(lowS.rbegin(), lowS.rend(), [](unsigned char ch) {
 			return !std::isspace(ch);
-			}).base(), s.end());
+			}).base(), lowS.end());
+		return lowS;
 	}
+	return s;
 }
 
-bool Utils::toCompare(std::string& a, std::string b)
+bool Utils::toCompare(const std::string& a, const std::string& b)
 {
-	toLowerAndTrim(a);
+	std::string lowA = toLowerAndTrim(a);
 	std::string lowB = toLower(b);
 	std::string delimeter = " ";
 	size_t pos = lowB.find(delimeter);
@@ -39,11 +36,74 @@ bool Utils::toCompare(std::string& a, std::string b)
 	{
 		lowB = lowB.substr(pos);
 	}
-	return a == lowB;
+	return lowA == lowB;
 }
 
-std::string Utils::GetColor(Colors col)
+void Utils::setColor(int col)
 {
-	//TODO: rewrite that
-	return "\033[" + std::to_string((int)col) + "m";
+	SetConsoleTextAttribute(hOut_, col);
 }
+
+COORD Utils::getCoords()
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo(hOut_, &csbi);
+	return csbi.dwCursorPosition;
+}
+
+void Utils::gotoxy(int x, int y)
+{
+	COORD c;
+	
+	c.X = x;
+	c.Y = y;
+	SetConsoleCursorPosition(hOut_, c);
+}
+
+void Utils::showCursor(bool show)
+{
+	CONSOLE_CURSOR_INFO cursorInfo;
+	GetConsoleCursorInfo(hOut_, &cursorInfo);
+	cursorInfo.bVisible = show;
+	SetConsoleCursorInfo(hOut_, &cursorInfo);
+}
+
+int Utils::menu(std::vector<std::string> options)
+{
+	showCursor(false);
+
+	int counter = 0;
+	char key;
+
+	int n = static_cast<int>(options.size());
+
+	COORD currentPos = getCoords();	
+
+	for (;;)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			setColor(i == counter ? 8 : 7);
+			gotoxy(currentPos.X + 5, currentPos.Y + i);
+			std::cout << options[i] << std::endl;
+		}
+
+		key = _getch();
+
+		if (key == 72)
+			counter = (counter - 1 + n) % n;
+
+		if (key == 80)
+			counter = (counter + 1) % n;
+
+		if (key == '\r')
+		{
+			std::cout << std::endl;
+			showCursor(true);
+			setColor(7);
+			return counter;
+		}
+	}
+}
+
+HANDLE Utils::hOut_ = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -4,7 +4,7 @@
 
 #define _TRIIGER_
 
-#include <string>
+#include "../stdafx.h"
 
 class Trigger
 {

@@ -3,7 +3,7 @@
 #ifndef _ITEM_
 #define _ITEM_
 
-#include <string>
+#include "../stdafx.h"
 
 class Item
 {
@@ -14,6 +14,8 @@ public:
 		clue_{ clue },
 		available_{ available }
 	{}
+
+	~Item();
 
 	std::string getName() const
 	{

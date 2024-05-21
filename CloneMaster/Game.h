@@ -3,12 +3,9 @@
 #ifndef _GAME_
 #define _GAME_
 
-#include <map>
-#include <string>
+#include "stdafx.h"
 #include "Models/Room.h"
 #include "Utilities/Input.h"
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
 #include "Models/Store.h"
 
 class Game
@@ -45,8 +42,12 @@ private:
 	void help();
 	//put the item in inventory
 	void take(std::string item);
+	//drop item into the room
+	void drop(std::string item);
 	//look through inventory
 	void printInventory();
+	//quit game
+	void quit();
 
 	//the array of all rooms in the game
 	std::map<std::string, Room*> rooms_;

@@ -1,7 +1,5 @@
 #include "Game.h"
-#include <fstream>
-#include <iostream>
-#include <filesystem>
+#include "Utilities/Utils.h"
 
 void Game::play()
 {
@@ -39,6 +37,7 @@ void Game::run()
 void Game::dispose()
 {
 	rooms_.clear();
+	inventory_.dispose();
 }
 
 void Game::printIntroduction()
@@ -73,6 +72,12 @@ void Game::updateState(Instruction instruction)
 		break;
 	case F_INVENTORY:
 		printInventory();
+		break;
+	case F_DROP:
+		drop(instruction.goal);
+		break;
+	case F_QUIT:
+		quit();
 		break;
 	default:
 		std::cout << "Excuse you?\n";
@@ -143,7 +148,22 @@ void Game::save()
 		roomsJson.push_back(roomJson);
 
 	}
+
 	j.emplace("rooms", roomsJson);
+
+
+	json inventoryJson;
+
+	for (const auto& item : inventory_.getEntities())
+	{
+		json itemJson;
+		itemJson["name"] = item->getName();
+		itemJson["description"] = item->getDescription();
+		itemJson["clue"] = item->getClue();
+		inventoryJson.push_back(itemJson);
+	}
+
+	j.emplace("inventory", inventoryJson);
 
 	f << std::setw(4) << j << std::endl;
 
@@ -199,6 +219,19 @@ void Game::parseData(json data)
 	}
 
 	currentRoom_ = rooms_.at(data.at("current"));
+
+	auto inventoryIt = data.find("inventory");
+
+	if (inventoryIt != data.end())
+	{
+		for (auto& itemJson : *inventoryIt)
+		{
+			std::string name = itemJson.at("name");
+			std::string description = itemJson.at("description");
+			std::string clue = itemJson.at("clue");
+			inventory_.addEntity(new Item(name, description, clue, true));
+		}
+	}
 }
 
 void Game::help()
@@ -211,8 +244,7 @@ void Game::help()
 	std::cout << "- i/inventory - look in your inventory" << std::endl;
 	//std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
 	std::cout << "- take/pick up smth - put something in your inventory" << std::endl;
-	//TODO drop
-	//TODO help
+	std::cout << "- drop smth - drop something from your inventory back into the room" << std::endl;
 	//TODO quit
 	//TODO examine
 	//TODO clone
@@ -242,6 +274,21 @@ void Game::take(std::string item)
 	std::cout << "Taken.\n";
 }
 
+void Game::drop(std::string item)
+{
+	Item* droppedItem = inventory_.deleteEntity(item);
+
+	if (droppedItem == nullptr)
+	{
+		std::cout << "You do not even have " << item << " in your inventory" << std::endl;
+		return;
+	}
+
+	currentRoom_->addItem(std::move(droppedItem));
+
+	std::cout << "Dropped.\n";
+}
+
 void Game::printInventory()
 {
 	if (inventory_.isEmpty())
@@ -252,4 +299,23 @@ void Game::printInventory()
 
 	std::cout << "Here are the items you possess:" << std::endl;
 	inventory_.printInfo();
+}
+
+void Game::quit()
+{
+	std::vector<std::string> options = { "Save", "Quit", "Continue playing"};
+	int choice = Utils::menu(options);
+
+	switch (choice)
+	{
+	case 0:
+		save();
+		break;
+	case 2:
+		return;
+	default:
+		break;
+	}
+
+	isRunning_ = false;
 }

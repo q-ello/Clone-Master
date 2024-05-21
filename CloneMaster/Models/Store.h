@@ -3,7 +3,7 @@
 #ifndef _STORE_
 #define _STORE_
 
-#include <vector>
+#include "../stdafx.h"
 #include "../Models/Item.h"
 #include "../Models/Character.h"
 #include "../Utilities/Utils.h"
@@ -12,7 +12,7 @@ template<typename T>
 class AbsLoot
 {
 public: 
-	T* deleteEntity(const std::string& name);
+	T deleteEntity(const std::string& name);
 
 	bool isFull();
 
@@ -21,6 +21,10 @@ public:
 	void printInfo();
 
 	bool isEmpty();
+
+	void dispose();
+
+	std::vector<T> getEntities();
 
 private:
 	std::vector<T> entities_;
@@ -31,26 +35,23 @@ using Inventory = AbsLoot<Item*>;
 
 using Squad = AbsLoot<Character*>;
 
-#endif // !_STORE_
-
 template<typename T>
-inline T* AbsLoot<T>::deleteEntity(const std::string& name)
+inline T AbsLoot<T>::deleteEntity(const std::string& name)
 {
 	int index = -1;
-	for (auto& it = entities_.begin(); it != entities_.end(); it++)
+	for (auto it = entities_.begin(); it != entities_.end(); it++)
 	{
 		if (Utils::toCompare(name, (*it)->getName())) {
-			index = it - entities_.begin();
+			index = static_cast<int>(it - entities_.begin());
 			break;
 		}
 	}
 	if (index == -1)
 	{
-		std::cout << "Failed to remove" << std::endl;
-		return;
+		return nullptr;
 	}
 
-	T* entityPtr = entities_[index];
+	T entityPtr = entities_[index];
 	entities_.erase(index + entities_.begin());
 	return entityPtr;
 }
@@ -81,3 +82,17 @@ inline bool AbsLoot<T>::isEmpty()
 {
 	return entities_.size() == 0;
 }
+
+template<typename T>
+inline void AbsLoot<T>::dispose()
+{
+	entities_.clear();
+}
+
+template<typename T>
+inline std::vector<T> AbsLoot<T>::getEntities()
+{
+	return entities_;
+}
+
+#endif // !_STORE_

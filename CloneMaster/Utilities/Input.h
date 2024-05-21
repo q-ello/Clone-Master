@@ -3,9 +3,8 @@
 #ifndef _INPUT_
 #define _INPUT_
 
-#include <string>
+#include "../stdafx.h"
 #include "Function.h"
-#include <vector>
 
 struct Instruction {
 	Function function;

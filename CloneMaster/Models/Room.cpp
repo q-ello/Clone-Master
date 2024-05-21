@@ -3,11 +3,15 @@
 
 Room::~Room()
 {
+	exits_.clear();
+	items_.clear();
 }
 
 void Room::printRoomInfo()
 {
-	std::cout << name_ << std::endl;
+	Utils::setColor(11);
+	std::cout << name_ << std::endl <<std::endl;
+	Utils::setColor(7);
 	std::cout << description_ << std::endl;
 
 	for (Item* item : items_)
@@ -45,7 +49,7 @@ Item* Room::getItemByName(std::string& name)
 	{
 		if (Utils::toCompare(name, (*it)->getName()))
 		{
-			index = it - items_.begin();
+			index = static_cast<int>(it - items_.begin());
 			break;
 		}
 	}

@@ -147,6 +147,7 @@
     <ClInclude Include="Models\Store.h" />
     <ClInclude Include="Models\Item.h" />
     <ClInclude Include="Models\Room.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Utilities\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

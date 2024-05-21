@@ -1,8 +1,5 @@
-#include <iostream>
-#include <sstream>
-
-#include "Input.h"
 #include "Utils.h"
+#include "Input.h"
 
 Instruction Input::ReadUser()
 {
@@ -164,7 +161,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		return;
 	}
 
-	if (n <= 2 && command[0] == "pick")
+	if (n <= 3 && command[0] == "pick")
 	{
 		inst.function = F_TAKE;
 		std::string goal = "";
@@ -183,9 +180,27 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		inst.goal = command[2];
 		return;
 	}
-	//TODO drop
-	//TODO help
-	//TODO quit
+
+	if (n <= 2 && command[0] == "drop")
+	{
+		inst.function = F_DROP;
+		std::string goal = "";
+		if (n == 1)
+		{
+			std::cout << "What do you wanna drop?\n";
+			std::getline(std::cin, goal);
+			inst.goal = goal;
+			return;
+		}
+		inst.goal = command[1];
+		return;
+	}
+
+	if (n == 1 && command[0] == "quit")
+	{
+		inst.function = F_QUIT;
+		return;
+	}
 	//TODO examine
 	//TODO clone
 	//TODO leave

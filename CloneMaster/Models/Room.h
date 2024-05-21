@@ -3,11 +3,8 @@
 #ifndef _ROOM_
 #define _ROOM_
 
-#include <string>
-#include <vector>
+#include "../stdafx.h"
 #include "../Utilities/Directions.h"
-#include <map>
-#include <iostream>
 #include "Item.h"
 
 struct Exit {

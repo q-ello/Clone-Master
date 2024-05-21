@@ -19,6 +19,7 @@ enum Function
 	F_LEAVE,
 	F_SUMMON,
 	F_LOOK,
-	F_HELP
+	F_HELP,
+	F_QUIT
 };
 
