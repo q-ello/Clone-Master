@@ -34,7 +34,7 @@ bool Utils::toCompare(const std::string& a, const std::string& b)
 	size_t pos = lowB.find(delimeter);
 	if (pos != std::string::npos)
 	{
-		lowB = lowB.substr(pos);
+		return lowA == lowB.substr(pos + 1);
 	}
 	return lowA == lowB;
 }
@@ -79,10 +79,13 @@ int Utils::menu(std::vector<std::string> options)
 
 	COORD currentPos = getCoords();
 
-	for (; currentPos.Y >= 30 - n; currentPos.Y -= 1)
+	for (int i = 0; i <= n; i++)
 	{
 		std::cout << std::endl;
 	}
+
+	if (currentPos.Y > 29 - n)
+		currentPos.Y = 29 - n;
 
 	while (true)
 	{
@@ -90,7 +93,6 @@ int Utils::menu(std::vector<std::string> options)
 		{
 			setColor(i == counter ? 8 : 7);
 			gotoxy(currentPos.X + 5, currentPos.Y + i);
-			std::string name = options[i];
 			std::cout << options[i] << std::endl;
 		}
 

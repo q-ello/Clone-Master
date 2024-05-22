@@ -99,6 +99,12 @@ public:
 	//trigger itemTrigger lmao
 	Item* triggerItem(int i, bool canTake);
 
+	//get name of openable exit
+	std::string getTriggerEntity(int i) const;
+
+	//openExit
+	void openExit(const std::string& exitName );
+
 private:
 	std::string name_;
 	std::string description_;

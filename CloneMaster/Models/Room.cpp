@@ -106,3 +106,19 @@ Item* Room::triggerItem(int triggerInd, bool takeable)
 
 	return getItem(itemInd);
 }
+
+std::string Room::getTriggerEntity(int i) const
+{
+	return triggers_[i]->getEntityName();
+}
+
+void Room::openExit(const std::string& exitName)
+{
+	for (auto& [dir, exit] : exits_)
+	{
+		if (exit.name == exitName)
+		{
+			exit.available = true;
+		}
+	}
+}

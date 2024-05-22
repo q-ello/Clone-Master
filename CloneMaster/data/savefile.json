@@ -1,12 +1,6 @@
 {
-    "current": "Cell",
-    "inventory": [
-        {
-            "clue": "A shard of a ceramic plate. It is sharp.",
-            "description": "You see a sharp ceramic shard.",
-            "name": "shard"
-        }
-    ],
+    "current": "Hideout",
+    "inventory": null,
     "rooms": [
         {
             "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.",
@@ -26,6 +20,12 @@
                     "clue": "You don't have the healthiest habits. Neither does the guard, Andrew.",
                     "description": "There is a pack of cigarettes laying around.",
                     "name": "Cigarettes"
+                },
+                {
+                    "available": false,
+                    "clue": "A shard of a ceramic plate. It is sharp.",
+                    "description": "You see a sharp ceramic shard.",
+                    "name": "shard"
                 }
             ],
             "name": "Cell",
@@ -94,7 +94,6 @@
                     "name": "Cell"
                 },
                 {
-                    "available": false,
                     "direction": "up",
                     "name": "Staff"
                 }

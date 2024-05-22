@@ -40,20 +40,38 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 {
 	if (n <= 2 && command[0] == "go") {
 		inst.function = F_GO;
-		if (n == 2)
+		if (n == 1)
 		{
-			inst.goal = command[1];
+			std::cout << "Where do you wanna go?\n";
+			int choice = Utils::menu({ "north", "east", "south", "west", "up", "down", "nowhere"});
+			switch (choice)
+			{
+			case 0:
+				inst.goal = "n";
+				break;
+			case 1:
+				inst.goal = "e";
+				break;
+			case 2:
+				inst.goal = "s";
+				break;
+			case 3:
+				inst.goal = "w";
+				break;
+			case 4:
+				inst.goal = "u";
+				break;
+			case 5:
+				inst.goal = "d";
+				break;
+			default:
+				inst.function = F_SKIP;
+				break;
+			}
 			return;
 		}
-		else
-		{
-			std::cout << "Where do you wanna go?\n>";
-			std::string direction;
-			std::getline(std::cin, direction);
-			inst.function = F_GO;
-			inst.goal = direction;
-			return;
-		}
+		inst.goal = command[1];
+		return;
 	}
 
 	if (n == 1 && (command[0] == "n" || command[0] == "north"))
@@ -149,12 +167,10 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	if (n <= 2 && command[0] == "take")
 	{
 		inst.function = F_TAKE;
-		std::string goal = "";
 		if (n == 1)
 		{
 			std::cout << "What do you wanna take?\n";
-			std::getline(std::cin, goal);
-			inst.goal = goal;
+			std::getline(std::cin, inst.goal);
 			return;
 		}
 		inst.goal = command[1];
@@ -164,12 +180,10 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	if (n <= 3 && command[0] == "pick")
 	{
 		inst.function = F_TAKE;
-		std::string goal = "";
 		if (n == 1)
 		{
 			std::cout << "What do you wanna pick up?\n";
-			std::getline(std::cin, goal);
-			inst.goal = goal;
+			std::getline(std::cin, inst.goal);
 			return;
 		}
 		if (command[1] != "up")
@@ -202,8 +216,27 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	{
 		inst.function = F_EXAMINE;
 		inst.goal = "";
-		if (n == 2)
-			inst.goal = command[1];
+		if (n == 1)
+		{
+			std::cout << "What do you want to examine?" << std::endl;
+			std::getline(std::cin, inst.goal);
+			return;
+		}
+		inst.goal = command[1];
+		return;
+	}
+
+	if (n <= 2 && command[0] == "move")
+	{
+		inst.function = F_MOVE;
+		inst.goal = "";
+		if (n == 1)
+		{
+			std::cout << "What do you want to move?" << std::endl;
+			std::getline(std::cin, inst.goal);
+			return;
+		}
+		inst.goal = command[1];
 		return;
 	}
 	//TODO clone

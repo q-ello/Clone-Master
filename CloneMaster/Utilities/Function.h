@@ -21,5 +21,7 @@ enum Function
 	F_LOOK,
 	F_HELP,
 	F_QUIT,
-	F_EXAMINE
+	F_EXAMINE,
+	F_MOVE,
+	F_SKIP
 };

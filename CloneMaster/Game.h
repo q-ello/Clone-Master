@@ -49,6 +49,8 @@ private:
 	void printInventory();
 	//examine item in the room or your inventory
 	void examine(const std::string& name);
+	//move something
+	void move(const std::string& name);
 	//quit game
 	void quit();
 

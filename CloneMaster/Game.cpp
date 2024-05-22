@@ -101,6 +101,11 @@ void Game::updateState(Instruction instruction)
 	case F_EXAMINE:
 		examine(instruction.goal);
 		break;
+	case F_SKIP:
+		break;
+	case F_MOVE:
+		move(instruction.goal);
+		break;
 	default:
 		std::cout << "Excuse you?\n";
 		break;
@@ -324,6 +329,7 @@ void Game::help()
 	//TODO equip
 	//TODO unequip
 	std::cout << "P.S. so, I know you're all lazy like me and don't wanna type long names. so don't. one word is enough, really" << std::endl;
+	std::cout << "P.P.S. sometimes you can even type only a command and get the list of options to choose" << std::endl;
 }
 
 void Game::take(const std::string& item)
@@ -419,6 +425,22 @@ void Game::examine(const std::string& name)
 	}
 
 	std::cout << "You cannot examine " << name << "." << std::endl;
+}
+
+void Game::move(const std::string& name)
+{
+	int i = currentRoom_->getTriggerByName(name);
+	if (i != -1 && currentRoom_->getTriggerAction(i) == T_MOVE)
+	{
+		std::string openedExit = currentRoom_->getTriggerEntity(i);
+		currentRoom_->openExit(openedExit);
+		rooms_[openedExit]->openExit(currentRoom_->getName());
+
+		std::cout << "You moved the " << name << "." << std::endl;
+		return;
+	}
+
+	std::cout << "You cannot move " << name << "." << std::endl;
 }
 
 void Game::quit()
