@@ -77,14 +77,20 @@ int Utils::menu(std::vector<std::string> options)
 
 	int n = static_cast<int>(options.size());
 
-	COORD currentPos = getCoords();	
+	COORD currentPos = getCoords();
 
-	for (;;)
+	for (; currentPos.Y >= 30 - n; currentPos.Y -= 1)
+	{
+		std::cout << std::endl;
+	}
+
+	while (true)
 	{
 		for (int i = 0; i < n; i++)
 		{
 			setColor(i == counter ? 8 : 7);
 			gotoxy(currentPos.X + 5, currentPos.Y + i);
+			std::string name = options[i];
 			std::cout << options[i] << std::endl;
 		}
 
@@ -96,11 +102,13 @@ int Utils::menu(std::vector<std::string> options)
 		if (key == 80)
 			counter = (counter + 1) % n;
 
-		if (key == '\r')
+		if (key == 13)
 		{
 			std::cout << std::endl;
 			showCursor(true);
 			setColor(7);
+			if (counter == n - 1)
+				std::cout << "Nothing happened." << std::endl;
 			return counter;
 		}
 	}

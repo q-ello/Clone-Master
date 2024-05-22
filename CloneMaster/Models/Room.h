@@ -6,6 +6,7 @@
 #include "../stdafx.h"
 #include "../Utilities/Directions.h"
 #include "Item.h"
+#include "Trigger.h"
 
 struct Exit {
 	std::string name;
@@ -33,38 +34,77 @@ public:
 	//get the name of the room we are going into
 	bool getExitId(Direction dir, std::string& id);
 
+	//get name of the room
 	std::string getName() const
 	{
 		return name_;
 	}
-
+	//get room's description
 	std::string getDescription() const
 	{
 		return description_;
 	}
-
+	//get room's exits
 	std::map<Direction, Exit> getExits() const
 	{
 		return exits_;
 	}
-
+	//get room's items
 	std::vector<Item*> getItems() const
 	{
 		return items_;
 	}
 
+	//get room's triggers
+	std::vector<Trigger*> getTriggers() const
+	{
+		return triggers_;
+	}
+
+	//add item to the room
 	void addItem(Item* item)
 	{
 		items_.push_back(std::move(item));
 	}
+	//get index of item in the room
+	int getItemByName(const std::string& name);
 
-	Item* getItemByName(std::string& name);
+	//check if item is available
+	bool itemIsAvailable(int i)
+	{
+		return items_[i]->isAvailable();
+	}
+
+	//get item from the room
+	Item* getItem(int i);
+
+	//get item's clue
+	void getItemClue(int i);
+
+	//add trigger to the room
+	void addTrigger(Trigger* trigger)
+	{
+		triggers_.push_back(std::move(trigger));
+	}
+
+	//get Trigger by name
+	int getTriggerByName(const std::string& name);
+
+	//get Trigger's clue
+	void getTriggerClue(int i);
+
+	//get trigger's action
+	TriggerAction getTriggerAction(int i);
+
+	//trigger itemTrigger lmao
+	Item* triggerItem(int i, bool canTake);
 
 private:
 	std::string name_;
 	std::string description_;
 	std::map<Direction, Exit> exits_;
 	std::vector<Item*> items_;
+	std::vector<Trigger*> triggers_;
 };
 
 #endif // !_ROOM_

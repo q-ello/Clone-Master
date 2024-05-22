@@ -41,7 +41,7 @@
         },
         {
           "name": "hole",
-          "description": "A hole leads down to a hideout you've made while the guards weren't looking."
+          "clue": "A hole leads down to a hideout you've made while the guards weren't looking."
         },
         {
           "name": "Garbage",
@@ -87,7 +87,7 @@
           "trigger": {
             "type": "exit",
             "name": "Staff",
-            "action": "examine"
+            "action": "move"
           }
         }
       ]

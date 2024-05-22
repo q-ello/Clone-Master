@@ -42,7 +42,7 @@ bool Room::getExitId(Direction dir, std::string& id)
 	return false;
 }
 
-Item* Room::getItemByName(std::string& name)
+int Room::getItemByName(const std::string& name)
 {
 	int index = -1;
 	for (auto it = items_.begin(); it != items_.end(); it++)
@@ -53,12 +53,56 @@ Item* Room::getItemByName(std::string& name)
 			break;
 		}
 	}
-	if (index == -1)
+	return index;
+}
+
+Item* Room::getItem(int i)
+{
+	Item* itemptr = items_[i];
+	items_.erase(items_.begin() + i);
+	return itemptr;
+}
+
+void Room::getItemClue(int i)
+{
+	std::cout << items_[i]->getClue() << std::endl;
+}
+
+int Room::getTriggerByName(const std::string& name)
+{
+	int index = -1;
+	for (auto it = triggers_.begin(); it != triggers_.end(); it++)
+	{
+		if (Utils::toCompare(name, (*it)->getName()))
+		{
+			index = static_cast<int>(it - triggers_.begin());
+			break;
+		}
+	}
+	return index;
+}
+
+void Room::getTriggerClue(int i)
+{
+	std::cout << triggers_[i]->getClue() << std::endl;
+}
+
+TriggerAction Room::getTriggerAction(int i)
+{
+	return triggers_[i]->getAction();
+}
+
+Item* Room::triggerItem(int triggerInd, bool takeable)
+{
+	std::string entName = triggers_[triggerInd]->getEntityName();
+	int itemInd = getItemByName(entName);
+	items_[itemInd]->setAvailable();
+	if (!takeable)
 	{
 		return nullptr;
 	}
 
-	Item* itemptr = items_[index];
-	items_.erase(items_.begin() + index);
-	return itemptr;
+	triggers_.erase(triggers_.begin() + triggerInd);
+
+	return getItem(itemInd);
 }

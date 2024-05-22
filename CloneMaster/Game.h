@@ -37,15 +37,18 @@ private:
 	//restore the progress from savefile.json
 	void restore();
 	//helper to parse json data
-	void parseData(json data);
+	void parseData(const json& data);
 	//help log
 	void help();
 	//put the item in inventory
-	void take(std::string item);
+	void take(const std::string& item);
 	//drop item into the room
-	void drop(std::string item);
+	void drop(const std::string& item);
+	void drop(int i);
 	//look through inventory
 	void printInventory();
+	//examine item in the room or your inventory
+	void examine(const std::string& name);
 	//quit game
 	void quit();
 

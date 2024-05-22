@@ -20,6 +20,6 @@ enum Function
 	F_SUMMON,
 	F_LOOK,
 	F_HELP,
-	F_QUIT
+	F_QUIT,
+	F_EXAMINE
 };
-

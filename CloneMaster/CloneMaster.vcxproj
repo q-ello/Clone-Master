@@ -132,6 +132,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Models\Item.cpp" />
+    <ClCompile Include="Models\Trigger.cpp" />
     <ClCompile Include="Utilities\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\Room.cpp" />

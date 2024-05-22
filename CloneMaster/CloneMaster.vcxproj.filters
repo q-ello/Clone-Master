@@ -39,6 +39,12 @@
     <ClCompile Include="Utilities\Utils.cpp">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="Models\Trigger.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\Item.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">

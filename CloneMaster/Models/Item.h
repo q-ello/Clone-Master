@@ -8,7 +8,7 @@
 class Item
 {
 public:
-	Item(const std::string& name, const std::string& description, const std::string& clue, bool available)
+	Item(const std::string& name, const std::string& description, const std::string& clue, bool available = true)
 		: name_{ name },
 		description_{ description },
 		clue_{ clue },
@@ -35,6 +35,11 @@ public:
 	std::string getClue() const
 	{
 		return clue_;
+	}
+
+	void setAvailable()
+	{
+		available_ = true;
 	}
 
 private:

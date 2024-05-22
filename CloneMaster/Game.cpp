@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Utilities/Utils.h"
+#include "Models/Trigger.h"
 
 void Game::play()
 {
@@ -74,10 +75,31 @@ void Game::updateState(Instruction instruction)
 		printInventory();
 		break;
 	case F_DROP:
+		if (inventory_.isEmpty())
+		{
+			std::cout << "You don't have anything to drop" << std::endl;
+			return;
+		}
+
+		if (instruction.goal == "")
+		{
+			std::cout << "What do you want to drop?" << std::endl;
+			std::vector names = inventory_.getEntitiesNames();
+			names.push_back("Nothing");
+			int choice = Utils::menu(names);
+			if (choice == names.size() - 1)
+				return;
+			drop(choice);
+			return;
+		}
+
 		drop(instruction.goal);
 		break;
 	case F_QUIT:
 		quit();
+		break;
+	case F_EXAMINE:
+		examine(instruction.goal);
 		break;
 	default:
 		std::cout << "Excuse you?\n";
@@ -145,6 +167,29 @@ void Game::save()
 		}
 		roomJson.emplace("items", itemsJson);
 
+		json triggersJson;
+
+		for (const auto& trigger : room->getTriggers())
+		{
+			json triggerJson;
+			triggerJson["name"] = trigger->getName();
+			triggerJson["clue"] = trigger->getClue();
+			if (trigger->getAction() != T_NONE)
+			{
+				json triggerInfo;
+				triggerInfo["type"] = trigger->getType();
+				triggerInfo["action"] = trigger->getAction();
+				triggerInfo["name"] = trigger->getEntityName();
+				if (trigger->getKey() != "")
+				{
+					triggerInfo["key"] = trigger->getKey();
+				}
+
+				triggerJson.emplace("trigger", triggerInfo);
+			}
+		}
+		roomJson.emplace("triggers", triggersJson);
+
 		roomsJson.push_back(roomJson);
 
 	}
@@ -185,18 +230,19 @@ void Game::restore()
 	currentRoom_->printRoomInfo();
 }
 
-void Game::parseData(json data)
+void Game::parseData(const json& data)
 {
 	for (auto& roomJson : data.at("rooms"))
 	{
-		std::string name = roomJson.at("name");
+		std::string roomName = roomJson.at("name");
 		auto descIt = roomJson.find("description");
-		std::string description = "";
+		std::string roomDesc = "";
 		if (descIt != roomJson.end())
 		{
-			description = *descIt;
+			roomDesc = *descIt;
 		}
-		Room* newRoom = new Room(name, description);
+		Room* newRoom = new Room(roomName, roomDesc);
+
 		for (auto& exitJson : roomJson.at("exits"))
 		{
 			newRoom->addExit(DirectionsToEnum.at(exitJson.at("direction")), 
@@ -207,15 +253,41 @@ void Game::parseData(json data)
 		{
 			for (auto& itemJson : roomJson.at("items"))
 			{
-				std::string name = itemJson.at("name");
-				std::string description = itemJson.at("description");
-				std::string clue = itemJson.at("clue");
-				bool available = itemJson.find("available") == itemJson.end();
-				newRoom->addItem(new Item(name, description, clue, available));
+				std::string itemName = itemJson.at("name");
+				std::string itemDesc = itemJson.at("description");
+				std::string itemClue = itemJson.at("clue");
+				bool itemAvailable = itemJson.find("available") == itemJson.end();
+				newRoom->addItem(new Item(itemName, itemDesc, itemClue, itemAvailable));
+			}
+		}
+		if (roomJson.contains("triggers"))
+		{
+			for (auto& triggerJson : roomJson.at("triggers"))
+			{
+				std::string triggerName = triggerJson.at("name");
+				std::string triggerClue = triggerJson.at("clue");
+				if (triggerJson.contains("trigger"))
+				{
+					json triggerInfo = triggerJson.at("trigger");
+					TriggerAction action = TriggerActionsToEnum.at(triggerInfo.at("action"));
+					std::string key = "";
+					auto keyIt = triggerInfo.find("key");
+					if (keyIt != triggerInfo.end())
+						key = *keyIt;
+					std::string entityName = triggerInfo.at("name");
+
+					TriggerType type = TriggerTypesToEnum.at(triggerInfo.at("type"));
+
+					newRoom->addTrigger(new Trigger(triggerName, triggerClue, entityName, action, key, type));
+					
+				}
+				else {
+					newRoom->addTrigger(new Trigger(triggerName, triggerClue));
+				}
 			}
 		}
 
-		rooms_[name] = newRoom;
+		rooms_[roomName] = newRoom;
 	}
 
 	currentRoom_ = rooms_.at(data.at("current"));
@@ -229,7 +301,7 @@ void Game::parseData(json data)
 			std::string name = itemJson.at("name");
 			std::string description = itemJson.at("description");
 			std::string clue = itemJson.at("clue");
-			inventory_.addEntity(new Item(name, description, clue, true));
+			inventory_.addEntity(new Item(name, description, clue));
 		}
 	}
 }
@@ -245,8 +317,8 @@ void Game::help()
 	//std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
 	std::cout << "- take/pick up smth - put something in your inventory" << std::endl;
 	std::cout << "- drop smth - drop something from your inventory back into the room" << std::endl;
-	//TODO quit
-	//TODO examine
+	std::cout << "- examine smth - examine smth. maybe you could find out some clues ;)" << std::endl;
+	std::cout << "- quit - quit game" << std::endl;
 	//TODO clone
 	//TODO leave
 	//TODO equip
@@ -254,7 +326,7 @@ void Game::help()
 	std::cout << "P.S. so, I know you're all lazy like me and don't wanna type long names. so don't. one word is enough, really" << std::endl;
 }
 
-void Game::take(std::string item)
+void Game::take(const std::string& item)
 {
 	if (inventory_.isFull())
 	{
@@ -262,27 +334,36 @@ void Game::take(std::string item)
 		return;
 	}
 
-	Item* neededItem = currentRoom_->getItemByName(item);
+	int i = currentRoom_->getItemByName(item);
 
-	if (neededItem == nullptr)
+	if (i == -1 && currentRoom_->itemIsAvailable(i))
 	{
-		std::cout << "You cannot take " << item << std::endl;
+		std::cout << "You cannot take " << item << "." << std::endl;
 		return;
 	}
+
+	Item* neededItem = currentRoom_->getItem(i);
 
 	inventory_.addEntity(std::move(neededItem));
 	std::cout << "Taken.\n";
 }
 
-void Game::drop(std::string item)
+void Game::drop(const std::string& item)
 {
-	Item* droppedItem = inventory_.deleteEntity(item);
+	int i = inventory_.getEntityByName(item);
 
-	if (droppedItem == nullptr)
+	if (i == -1)
 	{
 		std::cout << "You do not even have " << item << " in your inventory" << std::endl;
 		return;
 	}
+
+	drop(i);
+}
+
+void Game::drop(int i)
+{
+	Item* droppedItem = inventory_.getEntity(i);
 
 	currentRoom_->addItem(std::move(droppedItem));
 
@@ -299,6 +380,45 @@ void Game::printInventory()
 
 	std::cout << "Here are the items you possess:" << std::endl;
 	inventory_.printInfo();
+}
+
+void Game::examine(const std::string& name)
+{
+	int i = currentRoom_->getItemByName(name);
+	if (i != -1 && currentRoom_->itemIsAvailable(i))
+	{
+		currentRoom_->getItemClue(i);
+		return;
+	}
+
+	i = currentRoom_->getTriggerByName(name);
+	if (i != -1)
+	{
+		currentRoom_->getTriggerClue(i);
+		if (currentRoom_->getTriggerAction(i) == T_EXAMINE)
+		{
+			if (inventory_.isFull())
+			{
+				currentRoom_->triggerItem(i, false);
+				std::cout << "You don't have enough space in your inventory to take it though." << std::endl;
+			}
+			else
+			{
+				Item* openedItem = currentRoom_->triggerItem(i, true);
+				inventory_.addEntity(std::move(openedItem));
+				std::cout << "You take it." << std::endl;
+			}
+		}
+		return;
+	}
+
+	i = inventory_.getEntityByName(name);
+	if (i != -1)
+	{
+		inventory_.getEntityClue(i);
+	}
+
+	std::cout << "You cannot examine " << name << "." << std::endl;
 }
 
 void Game::quit()

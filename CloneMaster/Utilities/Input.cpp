@@ -184,15 +184,11 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	if (n <= 2 && command[0] == "drop")
 	{
 		inst.function = F_DROP;
-		std::string goal = "";
-		if (n == 1)
+		inst.goal = "";
+		if (n == 2)
 		{
-			std::cout << "What do you wanna drop?\n";
-			std::getline(std::cin, goal);
-			inst.goal = goal;
-			return;
+			inst.goal = command[1];
 		}
-		inst.goal = command[1];
 		return;
 	}
 
@@ -201,9 +197,16 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		inst.function = F_QUIT;
 		return;
 	}
-	//TODO examine
+
+	if (n <= 2 && command[0] == "examine")
+	{
+		inst.function = F_EXAMINE;
+		inst.goal = "";
+		if (n == 2)
+			inst.goal = command[1];
+		return;
+	}
 	//TODO clone
-	//TODO leave
 	//TODO equip
 	//TODO unequip
 	inst.function = F_NONE;
