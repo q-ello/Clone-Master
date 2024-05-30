@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Utilities/Utils.h"
 #include "Models/Trigger.h"
+#include "Models/NPC.h"
 
 void Game::play()
 {
@@ -37,8 +38,9 @@ void Game::run()
 
 void Game::dispose()
 {
+	std::cout << "Thanks for playing!" << std::endl;
+
 	rooms_.clear();
-	inventory_.dispose();
 }
 
 void Game::printIntroduction()
@@ -51,9 +53,44 @@ void Game::printIntroduction()
 
 void Game::updateState(Instruction instruction)
 {
+	if (isInCombat_ && instruction.function != F_ATTACK && instruction.function != F_GIVE)
+	{
+		std::cout << "You cannot do that, you are in combat now." << std::endl;
+		getAttacked();
+		return;
+	}
+
 	switch (instruction.function)
 	{
 	case F_GO:
+		if (instruction.goal == "")
+		{
+			std::cout << "Where do you wanna go?\n";
+			int choice = Utils::menu({ "north", "east", "south", "west", "up", "down", "nowhere" });
+			switch (choice)
+			{
+			case 0:
+				instruction.goal = "n";
+				break;
+			case 1:
+				instruction.goal = "e";
+				break;
+			case 2:
+				instruction.goal = "s";
+				break;
+			case 3:
+				instruction.goal = "w";
+				break;
+			case 4:
+				instruction.goal = "u";
+				break;
+			case 5:
+				instruction.goal = "d";
+				break;
+			default:
+				return;
+			}
+		}
 		go(instruction.goal);
 		break;
 	case F_SAVE:
@@ -101,10 +138,39 @@ void Game::updateState(Instruction instruction)
 	case F_EXAMINE:
 		examine(instruction.goal);
 		break;
-	case F_SKIP:
-		break;
 	case F_MOVE:
 		move(instruction.goal);
+		break;
+	case F_ATTACK:
+		if (dmg_ == 0)
+		{
+			std::cout << "You really think you can take someone with bare hands?" << std::endl;
+			return;
+		}
+
+		if (instruction.goal == "")
+		{
+			attack();
+			return;
+		}
+		attack(instruction.goal);
+		break;
+
+	case F_GIVE:
+		if (instruction.goal == "")
+		{
+			std::cout << "What do you want to give?" << std::endl;
+			std::vector<std::string> names = inventory_.getEntitiesNames();
+			names.push_back("Nothing");
+			int choice = Utils::menu(names);
+			if (choice == names.size() - 1)
+				return;
+			std::cout << "Whom do you want to give it to?" << std::endl;
+			std::getline(std::cin, instruction.object);
+			give(choice, instruction.object);
+			return;
+		}
+		give(instruction.goal, instruction.object);
 		break;
 	default:
 		std::cout << "Excuse you?\n";
@@ -123,10 +189,20 @@ void Game::go(const std::string& direction)
 	dir = DirectionsToEnum[direction];
 
 	std::string id;
-	if (currentRoom_->getExitId(dir, id))
+	if (!currentRoom_->getExitId(dir, id))
 	{
-		currentRoom_ = rooms_[id];
-		currentRoom_->printRoomInfo();
+		return;
+	}
+
+	currentRoom_ = rooms_[id];
+	currentRoom_->printRoomInfo();
+
+	NPC* possibleEnemy = currentRoom_->isDangerous();
+
+	if (possibleEnemy != nullptr)
+	{
+		isInCombat_ = true;
+		currentEnemy_ = possibleEnemy;
 	}
 }
 
@@ -136,6 +212,7 @@ void Game::save()
 	json j;
 	j["current"] = currentRoom_->getName();
 	json roomsJson;
+	json npcsJson;
 	for (const auto& [key, room] : rooms_)
 	{
 		json roomJson;
@@ -193,14 +270,49 @@ void Game::save()
 				triggerJson.emplace("trigger", triggerInfo);
 			}
 		}
+
 		roomJson.emplace("triggers", triggersJson);
 
 		roomsJson.push_back(roomJson);
 
+		for (auto& npc : room->getNPCs())
+		{
+			json npcInRoom;
+
+			bool exists = false;
+
+			for (auto& j : npcsJson)
+			{
+				if (j.at("name") == npc->getName())
+				{
+					j.at("rooms").push_back(room->getName());
+					exists = true;
+				}
+			}
+
+			if (exists)
+				continue;
+
+			npcInRoom["name"] = npc->getName();
+			npcInRoom["hp"] = npc->getHP();
+			npcInRoom["dmg"] = npc->damage();
+			npcInRoom["hit_chance"] = npc->getHitChance();
+			npcInRoom["can_clone"] = npc->canBeCloned();
+			npcInRoom["is_recruitable"] = npc->isRecrutable();
+			npcInRoom["in_room_alive"] = npc->getDescriptionAwake();
+			npcInRoom["in_room_dead"] = npc->getDescriptionUnconscious();
+			npcInRoom["greeting"] = npc->getGreeting();
+			npcInRoom["incorrect_item_response"] = npc->incorrectItemResponse();
+			npcInRoom["required_item"] = npc->requiredItem();
+			npcInRoom["has_item_response"] = npc->hasItemResponse();
+			npcInRoom["rooms"].push_back(room->getName());
+
+			npcsJson.push_back(npcInRoom);
+		}
 	}
 
 	j.emplace("rooms", roomsJson);
-
+	j.emplace("npcs", npcsJson);
 
 	json inventoryJson;
 
@@ -215,9 +327,13 @@ void Game::save()
 
 	j.emplace("inventory", inventoryJson);
 
+	j.emplace("dmg", dmg_);
+
 	f << std::setw(4) << j << std::endl;
 
 	std::cout << "Your progress was saved." << std::endl;
+
+	
 }
 
 void Game::restore()
@@ -309,25 +425,62 @@ void Game::parseData(const json& data)
 			inventory_.addEntity(new Item(name, description, clue));
 		}
 	}
+
+	for (auto& npcJson : data.at("npcs"))
+	{
+		
+		std::string name = npcJson.at("name");
+		int HP = npcJson.at("hp");
+		int dmg = npcJson.at("dmg");
+		int hitChance = npcJson.at("hit_chance");
+		bool canBeCloned = npcJson.at("can_clone");
+		bool isRecrutable = npcJson.at("is_recruitable");
+		std::string inRoomAwake = npcJson.at("in_room_alive");
+		std::string inRoomUnconscious = npcJson.at("in_room_dead");
+		std::string greeting = npcJson.at("greeting");
+		std::string incorrectItemResponse = npcJson.at("incorrect_item_response");
+		std::string requiredItem = "";
+		std::string hasItemResponse = "";
+
+		auto reqItemIt = npcJson.find("required_item");
+		if (reqItemIt != npcJson.end())
+		{
+			requiredItem = *reqItemIt;
+			hasItemResponse = npcJson.at("has_item_response");
+		}
+
+		NPC* newNPC = new NPC(name, dmg, hitChance, inRoomAwake, inRoomUnconscious, incorrectItemResponse, requiredItem, hasItemResponse,
+			HP, greeting, canBeCloned, isRecrutable);
+
+		for (auto& room : npcJson.at("rooms"))
+		{
+			rooms_[room]->addNPC(std::move(newNPC));
+		}
+	}
+
+	if (data.contains("dmg"))
+	{
+		dmg_ = data.at("dmg");
+	}
 }
 
 void Game::help()
 {
 	std::cout << "- help/? - see help" << std::endl;
-	std::cout << "- go north/go n/north/n - go north, and etc for east/south/west/up/down" << std::endl;
+	std::cout << "- (go north)/(go n)/north/n - go north, and etc for east/south/west/up/down" << std::endl;
 	std::cout << "- good news, you can save your progress! to do that type 'save'" << std::endl;
 	std::cout << "- restore - restore your progress" << std::endl;
 	std::cout << "- l/look - look around the room you currently in" << std::endl;
 	std::cout << "- i/inventory - look in your inventory" << std::endl;
-	//std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
 	std::cout << "- take/pick up smth - put something in your inventory" << std::endl;
 	std::cout << "- drop smth - drop something from your inventory back into the room" << std::endl;
-	std::cout << "- examine smth - examine smth. maybe you could find out some clues ;)" << std::endl;
+	std::cout << "- examine smth - maybe you could find out some clues ;)" << std::endl;
+	std::cout << "- use smth on smth/some other commands - sometimes you just need to give it a try" << std::endl;
+	std::cout << "- clone sb - you're a clone master after all" << std::endl;
+	std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
+	std::cout << "- give smth to sb - sometimes you can just negotiate" << std::endl;
+	std::cout << "- attack sb - you don't need to worry about the weapon" << std::endl;
 	std::cout << "- quit - quit game" << std::endl;
-	//TODO clone
-	//TODO leave
-	//TODO equip
-	//TODO unequip
 	std::cout << "P.S. so, I know you're all lazy like me and don't wanna type long names. so don't. one word is enough, really" << std::endl;
 	std::cout << "P.P.S. sometimes you can even type only a command and get the list of options to choose" << std::endl;
 }
@@ -342,7 +495,7 @@ void Game::take(const std::string& item)
 
 	int i = currentRoom_->getItemByName(item);
 
-	if (i == -1 && currentRoom_->itemIsAvailable(i))
+	if (i == -1 || !currentRoom_->itemIsAvailable(i))
 	{
 		std::cout << "You cannot take " << item << "." << std::endl;
 		return;
@@ -354,22 +507,22 @@ void Game::take(const std::string& item)
 	std::cout << "Taken.\n";
 }
 
-void Game::drop(const std::string& item)
+void Game::drop(const std::string& name)
 {
-	int i = inventory_.getEntityByName(item);
+	Item* item = inventory_.getEntity(name, true);
 
-	if (i == -1)
+	if (item == nullptr)
 	{
-		std::cout << "You do not even have " << item << " in your inventory" << std::endl;
+		std::cout << "You do not even have " << name << " in your inventory." << std::endl;
 		return;
 	}
 
-	drop(i);
+	currentRoom_->addItem(std::move(item));
 }
 
 void Game::drop(int i)
 {
-	Item* droppedItem = inventory_.getEntity(i);
+	Item* droppedItem = inventory_.getEntity(i, true);
 
 	currentRoom_->addItem(std::move(droppedItem));
 
@@ -411,6 +564,13 @@ void Game::examine(const std::string& name)
 			else
 			{
 				Item* openedItem = currentRoom_->triggerItem(i, true);
+				if (dmg_ == 0 && openedItem->getName() == "shard")
+				{
+					dmg_ += 1;
+					std::cout << "Good, now you have a weapon." << std::endl;
+					delete openedItem;
+					return;
+				}
 				inventory_.addEntity(std::move(openedItem));
 				std::cout << "You take it." << std::endl;
 			}
@@ -418,10 +578,11 @@ void Game::examine(const std::string& name)
 		return;
 	}
 
-	i = inventory_.getEntityByName(name);
-	if (i != -1)
+	Item* item = inventory_.getEntity(name, false);
+	if (item != nullptr)
 	{
-		inventory_.getEntityClue(i);
+		std::cout << item->getClue() << std::endl;
+		return;
 	}
 
 	std::cout << "You cannot examine " << name << "." << std::endl;
@@ -441,6 +602,150 @@ void Game::move(const std::string& name)
 	}
 
 	std::cout << "You cannot move " << name << "." << std::endl;
+}
+
+void Game::attack(const std::string& name)
+{
+	NPC* attacked = currentRoom_->getNPCByName(name);
+
+	if (attacked == nullptr)
+	{
+		std::cout << "You cannot attack " << name << ".\n";
+		return;
+	}
+
+	if (!attacked->isAwake())
+	{
+		std::cout << "Come on, you've done enough damage already, stop." << std::endl;
+		return;
+	}
+
+	if (!isInCombat_)
+	{
+		isInCombat_ = true;
+		currentEnemy_ = attacked;
+	}
+
+	attack();
+}
+
+void Game::attack()
+{
+	int damage = dmg_;
+	 
+	if (squad_.isEmpty())
+	{
+		std::cout << "You attack him with your shard." << std::endl;
+	}
+	else
+	{
+		std::cout << "You and your squad attack him all at once." << std::endl;
+
+		damage += squad_.getOverallDamage();
+	}
+
+	currentEnemy_->takeDamage(damage);
+	
+	if (currentEnemy_->isAwake())
+	{
+		std::cout << currentEnemy_->getName() << " strikes back." << std::endl;
+		getAttacked();
+		return;
+	}
+
+	isInCombat_ = false;
+	currentEnemy_ = nullptr;
+}
+
+void Game::getAttacked()
+{
+	if (squad_.isEmpty())
+	{
+		std::cout << "There is nobody to protect you, and you are extremely weak. You have no chance but to surrender." << std::endl;
+		isRunning_ = false;
+	}
+
+	int who = rand() % sizeof(squad_);
+
+	NPC* attackedMember = squad_.getEntity(who, false);
+
+	attackedMember->takeDamage(currentEnemy_->damage());
+
+	if (!attackedMember->isAwake())
+	{
+		squad_.deleteEntity(who);
+		currentRoom_->addNPC(std::move(attackedMember));
+	}
+}
+
+void Game::give(const std::string& item, const std::string& npc)
+{
+	Item* givenItem = inventory_.getEntity(item);
+
+	if (givenItem == nullptr)
+	{
+		std::cout << "You do not have " << item << " to give." << std::endl;
+		return;
+	}
+
+	NPC* npcToGive = currentRoom_->getNPCByName(npc);
+
+	if (npcToGive == nullptr)
+	{
+		std::cout << "There is no " << npc << " in the room." << std::endl;
+		return;
+	}
+
+	Utils::setColor(14);
+	std::cout << npcToGive->getName() << ": ";
+	Utils::setColor(7);
+
+	if (Utils::toCompare(npcToGive->requiredItem(), item))
+	{
+		std::cout << npcToGive->hasItemResponse() << std::endl;
+		std::cout << "..." << std::endl << "..." << std::endl << "..." << std::endl;
+		std::cout << "Andrew fell asleep, drowsy from smoking." << std::endl;
+		npcToGive->setHP(0);
+		inventory_.deleteEntity(item);
+		return;
+	}
+	else
+	{
+		std::cout << npcToGive->incorrectItemResponse() << std::endl;
+		return;
+	}
+}
+
+void Game::give(int item, const std::string& npc)
+{
+	Item* givenItem = inventory_.getEntity(item);
+
+	NPC* npcToGive = currentRoom_->getNPCByName(npc);
+
+	if (npcToGive == nullptr)
+	{
+		std::cout << "There is no " << npc << " in the room." << std::endl;
+		return;
+	}
+
+	Utils::setColor(14);
+	std::cout << npcToGive->getName() << ": ";
+	Utils::setColor(7);
+
+	if (Utils::toCompare(npcToGive->requiredItem(), givenItem->getName()))
+	{
+		std::cout << npcToGive->hasItemResponse() << std::endl;
+		std::cout << "..." << std::endl << "..." << std::endl << "..." << std::endl;
+		std::cout << "Andrew fell asleep, drowsy from smoking." << std::endl;
+		npcToGive->setHP(0);
+		inventory_.deleteEntity(item);
+		return;
+	}
+	else
+	{
+		std::cout << npcToGive->incorrectItemResponse() << std::endl;
+		return;
+	}
 }
 
 void Game::quit()

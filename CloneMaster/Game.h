@@ -12,10 +12,13 @@ class Game
 {
 public:
 	Game()
-		:isRunning_{false},
-		currentRoom_{nullptr},
+		:isRunning_{ false },
+		currentRoom_{ nullptr },
 		inventory_{},
-		squad_{}
+		squad_{},
+		dmg_{ 0 },
+		isInCombat_ {false},
+		currentEnemy_ {nullptr}
 	{};
 
 	void play();
@@ -51,6 +54,14 @@ private:
 	void examine(const std::string& name);
 	//move something
 	void move(const std::string& name);
+	//attack npc
+	void attack(const std::string& name);
+	void attack();
+	//get attacked by npc
+	void getAttacked();
+	//give smth to npc
+	void give(const std::string& item, const std::string& npc);
+	void give(int item, const std::string& npc);
 	//quit game
 	void quit();
 
@@ -61,6 +72,9 @@ private:
 	Room* currentRoom_;
 	Inventory inventory_;
 	Squad squad_;
+	int dmg_;
+	bool isInCombat_;
+	NPC* currentEnemy_;
 };
 
 #endif // !_GAME_

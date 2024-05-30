@@ -5,6 +5,7 @@ Room::~Room()
 {
 	exits_.clear();
 	items_.clear();
+	npcs_.clear();
 }
 
 void Room::printRoomInfo()
@@ -20,6 +21,11 @@ void Room::printRoomInfo()
 		{
 			std::cout << item->getDescription() << std::endl;
 		}
+	}
+
+	for (NPC* npc : npcs_)
+	{
+		std::cout << npc->getDescription() << std::endl;
 	}
 }
 
@@ -94,7 +100,7 @@ TriggerAction Room::getTriggerAction(int i)
 
 Item* Room::triggerItem(int triggerInd, bool takeable)
 {
-	std::string entName = triggers_[triggerInd]->getEntityName();
+	std::string entName = getTriggerEntity(triggerInd);
 	int itemInd = getItemByName(entName);
 	items_[itemInd]->setAvailable();
 	if (!takeable)
@@ -102,14 +108,15 @@ Item* Room::triggerItem(int triggerInd, bool takeable)
 		return nullptr;
 	}
 
-	triggers_.erase(triggers_.begin() + triggerInd);
-
 	return getItem(itemInd);
 }
 
-std::string Room::getTriggerEntity(int i) const
+std::string Room::getTriggerEntity(int i)
 {
-	return triggers_[i]->getEntityName();
+	std::string entityName = triggers_[i]->getEntityName();
+	triggers_.erase(triggers_.begin() + i);
+
+	return entityName;
 }
 
 void Room::openExit(const std::string& exitName)
@@ -121,4 +128,47 @@ void Room::openExit(const std::string& exitName)
 			exit.available = true;
 		}
 	}
+}
+
+NPC* Room::getNPCByName(const std::string& name)
+{
+	int index = -1;
+	for (auto it = npcs_.begin(); it != npcs_.end(); it++)
+	{
+		if (Utils::toCompare(name, (*it)->getName()))
+		{
+			index = static_cast<int>(it - npcs_.begin());
+			break;
+		}
+	}
+	if (index == -1)
+		return nullptr;
+
+	return npcs_[index];
+}
+
+void Room::deleteNPC(int i)
+{
+	npcs_.erase(npcs_.begin() + i);
+}
+
+NPC* Room::isDangerous()
+{
+	NPC* possibleEnemy = nullptr;
+	for (auto& npc : npcs_)
+	{
+		if (npc->isAwake())
+		{
+			Utils::setColor(14);
+			std::cout << npc->getName() << ": ";
+			Utils::setColor(7);
+			std::cout << npc->getGreeting() << std::endl;
+		}
+
+		if (npc->getName() != "Guard Andrew" && npc->isAwake() && !npc->isRecrutable())
+		{
+			possibleEnemy = npc;
+		}
+	}
+	return possibleEnemy;
 }

@@ -132,15 +132,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Models\Item.cpp" />
-    <ClCompile Include="Models\Trigger.cpp" />
+    <ClCompile Include="Models\NPC.cpp" />
+    <ClCompile Include="Models\Store.cpp" />
     <ClCompile Include="Utilities\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\Room.cpp" />
     <ClCompile Include="Utilities\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Models\Character.h" />
+    <ClInclude Include="Models\NPC.h" />
     <ClInclude Include="Models\Trigger.h" />
     <ClInclude Include="Utilities\Function.h" />
     <ClInclude Include="Utilities\Input.h" />

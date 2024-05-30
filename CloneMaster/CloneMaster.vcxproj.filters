@@ -39,10 +39,10 @@
     <ClCompile Include="Utilities\Utils.cpp">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="Models\Trigger.cpp">
+    <ClCompile Include="Models\NPC.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Models\Item.cpp">
+    <ClCompile Include="Models\Store.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +71,7 @@
     <ClInclude Include="Utilities\Utils.h">
       <Filter>Исходные файлы\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Models\Character.h">
+    <ClInclude Include="Models\NPC.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Models\Trigger.h">

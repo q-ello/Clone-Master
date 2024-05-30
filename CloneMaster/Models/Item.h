@@ -15,7 +15,7 @@ public:
 		available_{ available }
 	{}
 
-	~Item();
+	~Item() {};
 
 	std::string getName() const
 	{

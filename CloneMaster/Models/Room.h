@@ -7,6 +7,7 @@
 #include "../Utilities/Directions.h"
 #include "Item.h"
 #include "Trigger.h"
+#include "NPC.h"
 
 struct Exit {
 	std::string name;
@@ -17,9 +18,11 @@ class Room
 {
 public:
 	Room(const std::string& name, const std::string& description)
-		: name_{ name },
-		description_{ description },
-		items_{}
+		: name_{ name }
+		, description_{ description }
+		, items_{}
+		, triggers_{}
+		, npcs_{}
 	{};
 
 	~Room();
@@ -100,10 +103,30 @@ public:
 	Item* triggerItem(int i, bool canTake);
 
 	//get name of openable exit
-	std::string getTriggerEntity(int i) const;
+	std::string getTriggerEntity(int i);
 
 	//openExit
 	void openExit(const std::string& exitName );
+
+	//addNPC to the room
+	void addNPC(NPC* npc)
+	{
+		npcs_.push_back(std::move(npc));
+	}
+
+	std::vector<NPC*> getNPCs() const
+	{
+		return npcs_;
+	}
+
+	//get npc in the room
+	NPC* getNPCByName(const std::string& name);
+
+	//delete npc from the room
+	void deleteNPC(int i);
+
+	//show hostile npc and greet 
+	NPC* isDangerous();
 
 private:
 	std::string name_;
@@ -111,6 +134,7 @@ private:
 	std::map<Direction, Exit> exits_;
 	std::vector<Item*> items_;
 	std::vector<Trigger*> triggers_;
+	std::vector<NPC*> npcs_;
 };
 
 #endif // !_ROOM_

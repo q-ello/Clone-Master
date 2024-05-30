@@ -1,1 +1,0 @@
-- переписать map rooms в int[] rooms с помощью enum

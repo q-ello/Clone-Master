@@ -7,7 +7,7 @@ Instruction Input::ReadUser()
 
 	std::string input = GetInput();
 
-	Utils::toLowerAndTrim(input);
+	std::string trimmedInput = Utils::toLowerAndTrim(input);
 
 	std::vector<std::string> inputVec;
 	std::string delimiter = " ";
@@ -15,13 +15,13 @@ Instruction Input::ReadUser()
 	size_t pos = 0;
 	int n = 0;
 	std::string token;
-	while ((pos = input.find(delimiter)) != std::string::npos) {
-		token = input.substr(0, pos);
+	while ((pos = trimmedInput.find(delimiter)) != std::string::npos) {
+		token = trimmedInput.substr(0, pos);
 		inputVec.push_back(token);
 		n++;
-		input.erase(0, pos + delimiter.length());
+		trimmedInput.erase(0, pos + delimiter.length());
 	}
-	inputVec.push_back(input);
+	inputVec.push_back(trimmedInput);
 	n++;
 
 	DetermineCommand(inputVec, n, inst);
@@ -42,32 +42,6 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		inst.function = F_GO;
 		if (n == 1)
 		{
-			std::cout << "Where do you wanna go?\n";
-			int choice = Utils::menu({ "north", "east", "south", "west", "up", "down", "nowhere"});
-			switch (choice)
-			{
-			case 0:
-				inst.goal = "n";
-				break;
-			case 1:
-				inst.goal = "e";
-				break;
-			case 2:
-				inst.goal = "s";
-				break;
-			case 3:
-				inst.goal = "w";
-				break;
-			case 4:
-				inst.goal = "u";
-				break;
-			case 5:
-				inst.goal = "d";
-				break;
-			default:
-				inst.function = F_SKIP;
-				break;
-			}
 			return;
 		}
 		inst.goal = command[1];
@@ -131,24 +105,6 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 	if (n == 1 && command[0] == "restore")
 	{
 		inst.function = F_RESTORE;
-		return;
-	}
-
-	if (n <= 3 && command[0] == "talk") {
-		std::string goal = "";
-		inst.function = F_TALK;
-		if (n == 1) {
-			std::cout << "Who do you wanna talk to?";
-			std::getline(std::cin, goal);
-			inst.goal = goal;
-			return;
-		}
-		if (command[1] != "to" && command[1] != "with")
-		{
-			inst.goal = command[1];
-			return;
-		}
-		inst.goal = command[2];
 		return;
 	}
 
@@ -239,8 +195,40 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		inst.goal = command[1];
 		return;
 	}
-	//TODO clone
-	//TODO equip
-	//TODO unequip
+
+	if (n <= 2 && command[0] == "attack")
+	{
+		inst.function = F_ATTACK;
+		if (n == 1)
+		{
+			return;
+		}
+
+		inst.goal = command[1];
+		return;
+	}
+
+	if (n <= 4 && command[0] == "give")
+	{
+		inst.function = F_GIVE;
+		if (n == 1)
+		{
+			return;
+		}
+
+		inst.goal = command[1];
+
+
+		if (n == 2 || n == 3)
+		{
+			std::cout << "Whom do you want to give it to?" << std::endl;
+			std::getline(std::cin, inst.object);
+			return;
+		}
+
+		inst.object = command[n - 1];
+		return;
+	}
+
 	inst.function = F_NONE;
 }

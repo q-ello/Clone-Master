@@ -1,9 +1,151 @@
 {
+  "npcs": [
+    {
+      "name": "Guard Andrew",
+      "hp": 1,
+      "hit_chance": 10,
+      "dmg": 1,
+      "can_clone": true,
+      "is_recruitable": false,
+      "required_item": "Cigarettes",
+      "greeting": "Hey? I'm not allowed to talk to prisoners, I guess...",
+      "has_item_response": "Wow, thank you. You are not as bad as the guys say.",
+      "incorrect_item_response": "What? How did you get this?!",
+      "in_room_alive": "The hallway is patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.",
+      "in_room_dead": "You see the body of Andrew",
+      "rooms": [
+        "Cell",
+        "Hallway 2"
+      ]
+    },
+    {
+      "name": "Prisoner William",
+      "hp": 1,
+      "hit_chance": 10,
+      "dmg": 1,
+      "can_clone": true,
+      "is_recruitable": true,
+      "greeting": "Oh my god! The guards are everywhere! Don't let me die!",
+      "incorrect_item_response": "What is this?! No, this is dangerous, I won't take it!",
+      "in_room_alive": "You see Prisoner William. He looks like he's about to cry",
+      "in_room_dead": "You see the body of William",
+
+      "rooms": [
+        "Upper Hallway 1"
+      ]
+    },
+
+    {
+      "name": "Prisoner Leon",
+      "hp": 5,
+      "hit_chance": 5,
+      "dmg": 3,
+      "can_clone": true,
+      "is_recruitable": true,
+      "greeting": "Heya, man. I heard there's useful stuff in the medical chamber. And that the freak Kevin is guarding the floor exit.",
+      "incorrect_item_response": "Eh, thank you but keep it. I don't need it",
+      "in_room_alive": "You see Prisoner Leon. He doesn't seem too bothered by being in prison",
+      "in_room_dead": "You see the body of Leon",
+
+      "rooms": [
+        "Lower Hallway 2"
+      ]
+    },
+
+
+    {
+      "name": "Prisoner David",
+      "hp": 10,
+      "hit_chance": 7,
+      "dmg": 5,
+      "can_clone": true,
+      "is_recruitable": true,
+      "greeting": "I will have my revenge against the guards...",
+      "incorrect_item_response": "I don't need this!",
+      "in_room_alive": "You see Prisoner David. He is really angry and looks like he's about to attack guards on sight",
+      "in_room_dead": "You see the body of David",
+
+      "rooms": [
+        "Upper Hallway 2"
+      ]
+    },
+
+    {
+
+
+      "name": "Guard Kevin",
+      "hp": 20,
+      "hit_chance": 7,
+      "dmg": 5,
+      "can_clone": true,
+      "is_recruitable": false,
+      "greeting": "YOU SCUM! I shall make you regret escaping that damned cell!",
+      "incorrect_item_response": "Hahaha! The attempts to bribe me will not change your fate!",
+      "in_room_alive": "You see Guard Kevin. Something about him seems... off.",
+      "in_room_dead": "You see the body of Kevin.",
+
+      "rooms": [
+        "Exit"
+      ]
+    },
+
+    {
+      "name": "Guard Bob",
+      "hp": 15,
+      "hit_chance": 7,
+      "dmg": 3,
+      "can_clone": true,
+      "is_recruitable": false,
+      "greeting": "Do not resist. I don't want to do more than necessary.",
+      "incorrect_item_response": "Back off!",
+      "in_room_alive": "You see Guard Bob.",
+      "in_room_dead": "You see the body of Bob",
+
+      "rooms": [
+        "Upper Hallway 1"
+      ]
+    },
+
+    {
+      "name": "Old Robot",
+      "hp": 3,
+      "hit_chance": 7,
+      "dmg":  4,
+      "can_clone": false,
+      "is_recruitable": false,
+      "greeting": "Beep-beep",
+      "incorrect_item_response": "Be-e-ep",
+      "in_room_alive": "You see an Old Robot. It doesn't seem to be in the best condition",
+      "in_room_dead": "You see the destroyed Old Robot",
+
+      "rooms": [
+        "Lower Hallway 3"
+      ]
+    },
+
+    {
+      "name": "Robot",
+      "hp": 10,
+      "hit_chance": 7,
+      "can_clone": false,
+      "dmg": 7,
+      "is_recruitable": false,
+      "greeting": "Beep-beep",
+      "incorrect_item_response": "Be-e-ep",
+      "in_room_alive": "You see a hostile Robot",
+      "in_room_dead": "You see the destroyed Robot",
+
+      "rooms": [
+        "Medbay"
+      ]
+    }
+  ],
+
   "current": "Cell",
   "rooms": [
     {
       "name": "Cell",
-      "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.",
+      "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.",
       "exits": [
         {
           "name": "Hideout",
@@ -83,7 +225,7 @@
       "triggers": [
         {
           "name": "Periodic Table",
-          "clue": "You move the table, accessing a ventilation leading upwards.",
+          "clue": "There is a hidden access to ventilation leading upwards behind it.",
           "trigger": {
             "type": "exit",
             "name": "Staff",
@@ -94,7 +236,7 @@
     },
     {
       "name": "Staff",
-      "description": "You climb up the ventilation, accessing the staff room. Luckily, no one is here.\nYou have climbed up to the second floor. The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+      "description": "Luckily, no one is here.The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
       "exits": [
         {
           "name": "Hideout",
@@ -181,6 +323,90 @@
           "name": "Hallway 1",
           "direction": "south",
           "available": false
+        }
+      ]
+    },
+    {
+      "name": "Upper Hallway 2",
+      "exits": [
+        {
+          "name": "Staff",
+          "direction": "south"
+        },
+
+        {
+          "name": "Upper Hallway 1",
+          "direction": "west"
+        }
+      ]
+    },
+    {
+      "name": "Upper Hallway 1",
+      "exits": [
+        {
+          "name": "Medbay",
+          "direction": "south"
+        },
+
+        {
+          "name": "Upper Hallway 2",
+          "direction": "east"
+        }
+      ]
+    },
+    {
+      "name": "Medbay",
+      "exits": [
+        {
+          "name": "Exit",
+          "direction": "east"
+        },
+
+        {
+          "name": "Upper Hallway 1",
+          "direction": "north"
+        },
+
+        {
+          "name": "Lower Hallway 1",
+          "direction": "south"
+        }
+      ]
+    },
+    {
+      "name": "Lower Hallway 2",
+      "exits": [
+        {
+          "name": "Lower Hallway 1",
+          "direction": "west"
+        },
+
+        {
+          "name": "Lower Hallway 3",
+          "direction": "east"
+        }
+      ]
+    },
+    {
+      "name": "Lower Hallway 3",
+      "exits": [
+        {
+          "name": "Lower Hallway 2",
+          "direction": "west"
+        },
+
+        {
+          "name": "Staff",
+          "direction": "north"
+        }
+      ]
+    },
+    {
+      "name": "Exit",
+      "exits": [
+        {
+          "name": "Medbay",
+          "direction": "west"
         }
       ]
     }

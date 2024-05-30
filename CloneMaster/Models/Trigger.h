@@ -39,7 +39,7 @@ public:
 		, neededItem_ {neededItem}
 	{}
 
-	~Trigger();
+	~Trigger() {};
 
 	std::string getName() const
 	{

@@ -1,9 +1,149 @@
 {
-    "current": "Hideout",
+    "current": "Cell",
+    "dmg": 0,
     "inventory": null,
+    "npcs": [
+        {
+            "can_clone": true,
+            "dmg": 1,
+            "greeting": "Hey? I'm not allowed to talk to prisoners, I guess...",
+            "has_item_response": "Wow, thank you. You are not as bad as the guys say.",
+            "hit_chance": 10,
+            "hp": 1,
+            "in_room_alive": "The hallway is patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.",
+            "in_room_dead": "You see the body of Andrew",
+            "incorrect_item_response": "What? How did you get this?!",
+            "is_recruitable": false,
+            "name": "Guard Andrew",
+            "required_item": "Cigarettes",
+            "rooms": [
+                "Cell",
+                "Hallway 2"
+            ]
+        },
+        {
+            "can_clone": true,
+            "dmg": 5,
+            "greeting": "YOU SCUM! I shall make you regret escaping that damned cell!",
+            "has_item_response": "",
+            "hit_chance": 7,
+            "hp": 20,
+            "in_room_alive": "You see Guard Kevin. Something about him seems... off.",
+            "in_room_dead": "You see the body of Kevin.",
+            "incorrect_item_response": "Hahaha! The attempts to bribe me will not change your fate!",
+            "is_recruitable": false,
+            "name": "Guard Kevin",
+            "required_item": "",
+            "rooms": [
+                "Exit"
+            ]
+        },
+        {
+            "can_clone": true,
+            "dmg": 3,
+            "greeting": "Heya, man. I heard there's useful stuff in the medical chamber. And that the freak Kevin is guarding the floor exit.",
+            "has_item_response": "",
+            "hit_chance": 5,
+            "hp": 5,
+            "in_room_alive": "You see Prisoner Leon. He doesn't seem too bothered by being in prison",
+            "in_room_dead": "You see the body of Leon",
+            "incorrect_item_response": "Eh, thank you but keep it. I don't need it",
+            "is_recruitable": true,
+            "name": "Prisoner Leon",
+            "required_item": "",
+            "rooms": [
+                "Lower Hallway 2"
+            ]
+        },
+        {
+            "can_clone": false,
+            "dmg": 4,
+            "greeting": "Beep-beep",
+            "has_item_response": "",
+            "hit_chance": 7,
+            "hp": 3,
+            "in_room_alive": "You see an Old Robot. It doesn't seem to be in the best condition",
+            "in_room_dead": "You see the destroyed Old Robot",
+            "incorrect_item_response": "Be-e-ep",
+            "is_recruitable": false,
+            "name": "Old Robot",
+            "required_item": "",
+            "rooms": [
+                "Lower Hallway 3"
+            ]
+        },
+        {
+            "can_clone": false,
+            "dmg": 7,
+            "greeting": "Beep-beep",
+            "has_item_response": "",
+            "hit_chance": 7,
+            "hp": 10,
+            "in_room_alive": "You see a hostile Robot",
+            "in_room_dead": "You see the destroyed Robot",
+            "incorrect_item_response": "Be-e-ep",
+            "is_recruitable": false,
+            "name": "Robot",
+            "required_item": "",
+            "rooms": [
+                "Medbay"
+            ]
+        },
+        {
+            "can_clone": true,
+            "dmg": 1,
+            "greeting": "Oh my god! The guards are everywhere! Don't let me die!",
+            "has_item_response": "",
+            "hit_chance": 10,
+            "hp": 1,
+            "in_room_alive": "You see Prisoner William. He looks like he's about to cry",
+            "in_room_dead": "You see the body of William",
+            "incorrect_item_response": "What is this?! No, this is dangerous, I won't take it!",
+            "is_recruitable": true,
+            "name": "Prisoner William",
+            "required_item": "",
+            "rooms": [
+                "Upper Hallway 1"
+            ]
+        },
+        {
+            "can_clone": true,
+            "dmg": 3,
+            "greeting": "Do not resist. I don't want to do more than necessary.",
+            "has_item_response": "",
+            "hit_chance": 7,
+            "hp": 15,
+            "in_room_alive": "You see Guard Bob.",
+            "in_room_dead": "You see the body of Bob",
+            "incorrect_item_response": "Back off!",
+            "is_recruitable": false,
+            "name": "Guard Bob",
+            "required_item": "",
+            "rooms": [
+                "Upper Hallway 1"
+            ]
+        },
+        {
+            "can_clone": true,
+            "dmg": 5,
+            "greeting": "I will have my revenge against the guards...",
+            "has_item_response": "",
+            "hit_chance": 7,
+            "hp": 10,
+            "in_room_alive": "You see Prisoner David. He is really angry and looks like he's about to attack guards on sight",
+            "in_room_dead": "You see the body of David",
+            "incorrect_item_response": "I don't need this!",
+            "is_recruitable": true,
+            "name": "Prisoner David",
+            "required_item": "",
+            "rooms": [
+                "Upper Hallway 2"
+            ]
+        }
+    ],
     "rooms": [
         {
-            "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.\nBehind the door you see a hallway, patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.\nOccasionally you have cigarettes  brought to you.",
+            "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.",
             "exits": [
                 {
                     "available": false,
@@ -29,6 +169,18 @@
                 }
             ],
             "name": "Cell",
+            "triggers": null
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "west",
+                    "name": "Medbay"
+                }
+            ],
+            "items": null,
+            "name": "Exit",
             "triggers": null
         },
         {
@@ -94,6 +246,7 @@
                     "name": "Cell"
                 },
                 {
+                    "available": false,
                     "direction": "up",
                     "name": "Staff"
                 }
@@ -114,7 +267,59 @@
             "triggers": null
         },
         {
-            "description": "You climb up the ventilation, accessing the staff room. Luckily, no one is here.\nYou have climbed up to the second floor. The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+            "description": "",
+            "exits": [
+                {
+                    "direction": "east",
+                    "name": "Lower Hallway 3"
+                },
+                {
+                    "direction": "west",
+                    "name": "Lower Hallway 1"
+                }
+            ],
+            "items": null,
+            "name": "Lower Hallway 2",
+            "triggers": null
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "north",
+                    "name": "Staff"
+                },
+                {
+                    "direction": "west",
+                    "name": "Lower Hallway 2"
+                }
+            ],
+            "items": null,
+            "name": "Lower Hallway 3",
+            "triggers": null
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "north",
+                    "name": "Upper Hallway 1"
+                },
+                {
+                    "direction": "east",
+                    "name": "Exit"
+                },
+                {
+                    "direction": "south",
+                    "name": "Lower Hallway 1"
+                }
+            ],
+            "items": null,
+            "name": "Medbay",
+            "triggers": null
+        },
+        {
+            "description": "Luckily, no one is here.The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
             "exits": [
                 {
                     "available": false,
@@ -147,6 +352,38 @@
             ],
             "items": null,
             "name": "Storage",
+            "triggers": null
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "east",
+                    "name": "Upper Hallway 2"
+                },
+                {
+                    "direction": "south",
+                    "name": "Medbay"
+                }
+            ],
+            "items": null,
+            "name": "Upper Hallway 1",
+            "triggers": null
+        },
+        {
+            "description": "",
+            "exits": [
+                {
+                    "direction": "south",
+                    "name": "Staff"
+                },
+                {
+                    "direction": "west",
+                    "name": "Upper Hallway 1"
+                }
+            ],
+            "items": null,
+            "name": "Upper Hallway 2",
             "triggers": null
         }
     ]

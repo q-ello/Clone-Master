@@ -5,41 +5,54 @@
 
 #include "../stdafx.h"
 #include "../Models/Item.h"
-#include "../Models/Character.h"
+#include "../Models/NPC.h"
 #include "../Utilities/Utils.h"
 
 template<typename T>
 class AbsLoot
 {
 public: 
-	//get index of entity
-	int getEntityByName(const std::string& name);
-	//get entity by index
-	T getEntity(int i);
+	AbsLoot()
+		:entities_{}
+		, maxSize_{5}
+	{};
+	~AbsLoot()
+	{
+		entities_.clear();
+	}
+	T getEntity(const std::string& name, bool toDelete = false);
+
+	T getEntity(int i, bool toDelete = false);
+
 	//check if full
 	bool isFull();
+
 	//add entity
 	void addEntity(T some);
+
 	//just print list of what you have
 	void printInfo();
+
 	//check if empty
 	bool isEmpty();
-	//delete
-	void dispose();
+
 	//get all entities
 	std::vector<T> getEntities();
+
 	//get list of names
 	std::vector<std::string> getEntitiesNames();
-	//get entity clue
-	void getEntityClue(int i);
-private:
+
+	void deleteEntity(int i);
+	void deleteEntity(const std::string& name);
+	
+protected:
 	std::vector<T> entities_;
-	int maxSize_ = 6;
+	int maxSize_;
 };
 
 using Inventory = AbsLoot<Item*>;
 
-using Squad = AbsLoot<Character*>;
+using SquadBase = AbsLoot<NPC*>;
 
 template<typename T>
 inline bool AbsLoot<T>::isFull()
@@ -69,15 +82,34 @@ inline bool AbsLoot<T>::isEmpty()
 }
 
 template<typename T>
-inline void AbsLoot<T>::dispose()
-{
-	entities_.clear();
-}
-
-template<typename T>
 inline std::vector<T> AbsLoot<T>::getEntities()
 {
 	return entities_;
+}
+
+
+template<typename T>
+inline void AbsLoot<T>::deleteEntity(int i)
+{
+	entities_.erase(i + entities_.begin());
+}
+
+template<typename T>
+inline void AbsLoot<T>::deleteEntity(const std::string& name)
+{
+	int i = -1;
+	for (auto it = entities_.begin(); it != entities_.end(); it++)
+	{
+		if (Utils::toCompare(name, (*it)->getName())) {
+			i = static_cast<int>(it - entities_.begin());
+			break;
+		}
+	}
+	if (i != -1)
+	{
+		entities_.erase(i + entities_.begin());
+	}
+
 }
 
 template<typename T>
@@ -93,13 +125,7 @@ inline std::vector<std::string> AbsLoot<T>::getEntitiesNames()
 }
 
 template<typename T>
-inline void AbsLoot<T>::getEntityClue(int i)
-{
-	std::cout << entities_[i]->getClue() << std::endl;
-}
-
-template<typename T>
-inline int AbsLoot<T>::getEntityByName(const std::string& name)
+inline T AbsLoot<T>::getEntity(const std::string& name, bool toDelete)
 {
 	int index = -1;
 	for (auto it = entities_.begin(); it != entities_.end(); it++)
@@ -110,15 +136,34 @@ inline int AbsLoot<T>::getEntityByName(const std::string& name)
 		}
 	}
 
-	return index;
+	if (index == -1)
+		return nullptr;
+
+	if (toDelete)
+	{
+		deleteEntity(index);
+	}
+
+	return entities_[index];
 }
 
+
 template<typename T>
-inline T AbsLoot<T>::getEntity(int i)
+inline T AbsLoot<T>::getEntity(int i, bool toDelete)
 {
-	T entityPtr = entities_[i];
-	entities_.erase(i + entities_.begin());
-	return entityPtr;
+	if (toDelete)
+	{
+		deleteEntity(i);
+	}
+	return entities_[i];
 }
+
+class Squad : public SquadBase
+{
+	using SquadBase::SquadBase;
+
+public:
+	int getOverallDamage();
+};
 
 #endif // !_STORE_
