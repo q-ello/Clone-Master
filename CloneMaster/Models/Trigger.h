@@ -11,6 +11,7 @@ enum TriggerAction
 	T_OPEN,
 	T_MOVE,
 	T_EXAMINE,
+	T_USE,
 	T_NONE
 };
 
@@ -82,7 +83,8 @@ static std::map<std::string, TriggerAction> TriggerActionsToEnum
 {
 	{"open", T_OPEN},
 	{"move", T_MOVE},
-	{"examine", T_EXAMINE}
+	{"examine", T_EXAMINE},
+	{"use", T_USE}
 };
 
 

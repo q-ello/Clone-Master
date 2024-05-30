@@ -616,12 +616,6 @@ void Game::help()
 
 void Game::take(const std::string& item)
 {
-	if (inventory_.isFull())
-	{
-		std::cout << "You already have too much items in your inventory.\n";
-		return;
-	}
-
 	int i = currentRoom_->getItem(item);
 
 	if (i == -1)
@@ -631,6 +625,30 @@ void Game::take(const std::string& item)
 	}
 
 	Item* neededItem = currentRoom_->getItem(i);
+
+	if (item == "ñloning device")
+	{
+		canClone_ = true;
+		std::cout << "Now you are in your whole power!" << std::endl;
+		currentRoom_->deleteItem(i);
+
+		return;
+	}
+
+
+	if (item == "battery")
+	{
+		batteries_++;
+		currentRoom_->deleteItem(i);
+		return;
+	}
+
+	if (inventory_.isFull())
+	{
+		std::cout << "You already have too much items in your inventory.\n";
+		return;
+	}
+
 
 	if (!neededItem->isAvailable())
 	{
@@ -642,7 +660,7 @@ void Game::take(const std::string& item)
 
 	if (neededItem->getName() == "Battery")
 	{
-		batteries_++;
+		
 		delete neededItem;
 	}
 	else
@@ -799,6 +817,13 @@ void Game::attack()
 		return;
 	}
 
+
+	if (currentEnemy_->getName() == "Guard Andrew")
+	{
+		std::cout << "You sneak out cell key from his pocket." << std::endl;
+		openItem("Cell Key");
+	}
+
 	isInCombat_ = false;
 	currentEnemy_ = nullptr;
 }
@@ -857,6 +882,8 @@ void Game::give(const std::string& item, const std::string& npc)
 		std::cout << "Andrew fell asleep, drowsy from smoking." << std::endl;
 		npcToGive->setHP(0);
 		inventory_.deleteEntity(iItem);
+		std::cout << "You sneak out cell key from his pocket." << std::endl;
+		openItem("Cell Key");
 		return;
 	}
 	else
