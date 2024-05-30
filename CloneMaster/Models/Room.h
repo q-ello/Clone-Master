@@ -70,19 +70,9 @@ public:
 		items_.push_back(std::move(item));
 	}
 	//get index of item in the room
-	int getItemByName(const std::string& name);
-
-	//check if item is available
-	bool itemIsAvailable(int i)
-	{
-		return items_[i]->isAvailable();
-	}
-
-	//get item from the room
+	int getItem(const std::string& name);
 	Item* getItem(int i);
-
-	//get item's clue
-	void getItemClue(int i);
+	void deleteItem(int i);
 
 	//add trigger to the room
 	void addTrigger(Trigger* trigger)
@@ -90,20 +80,10 @@ public:
 		triggers_.push_back(std::move(trigger));
 	}
 
-	//get Trigger by name
-	int getTriggerByName(const std::string& name);
-
-	//get Trigger's clue
-	void getTriggerClue(int i);
-
-	//get trigger's action
-	TriggerAction getTriggerAction(int i);
-
-	//trigger itemTrigger lmao
-	Item* triggerItem(int i, bool canTake);
-
-	//get name of openable exit
-	std::string getTriggerEntity(int i);
+	//get Trigger
+	int getTrigger(const std::string& name);
+	Trigger* getTrigger(int i);
+	void deleteTrigger(int i);
 
 	//openExit
 	void openExit(const std::string& exitName );
@@ -120,8 +100,8 @@ public:
 	}
 
 	//get npc in the room
-	NPC* getNPCByName(const std::string& name);
-
+	NPC* getNPC(int i);
+	int getNPC(const std::string& name);
 	//delete npc from the room
 	void deleteNPC(int i);
 

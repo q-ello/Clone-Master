@@ -20,9 +20,9 @@ public:
 	{
 		entities_.clear();
 	}
-	T getEntity(const std::string& name, bool toDelete = false);
+	int getEntity(const std::string& name);
 
-	T getEntity(int i, bool toDelete = false);
+	T getEntity(int i);
 
 	//check if full
 	bool isFull();
@@ -43,7 +43,6 @@ public:
 	std::vector<std::string> getEntitiesNames();
 
 	void deleteEntity(int i);
-	void deleteEntity(const std::string& name);
 	
 protected:
 	std::vector<T> entities_;
@@ -95,24 +94,6 @@ inline void AbsLoot<T>::deleteEntity(int i)
 }
 
 template<typename T>
-inline void AbsLoot<T>::deleteEntity(const std::string& name)
-{
-	int i = -1;
-	for (auto it = entities_.begin(); it != entities_.end(); it++)
-	{
-		if (Utils::toCompare(name, (*it)->getName())) {
-			i = static_cast<int>(it - entities_.begin());
-			break;
-		}
-	}
-	if (i != -1)
-	{
-		entities_.erase(i + entities_.begin());
-	}
-
-}
-
-template<typename T>
 inline std::vector<std::string> AbsLoot<T>::getEntitiesNames()
 {
 	std::vector<std::string> names;
@@ -125,7 +106,7 @@ inline std::vector<std::string> AbsLoot<T>::getEntitiesNames()
 }
 
 template<typename T>
-inline T AbsLoot<T>::getEntity(const std::string& name, bool toDelete)
+inline int AbsLoot<T>::getEntity(const std::string& name)
 {
 	int index = -1;
 	for (auto it = entities_.begin(); it != entities_.end(); it++)
@@ -136,25 +117,13 @@ inline T AbsLoot<T>::getEntity(const std::string& name, bool toDelete)
 		}
 	}
 
-	if (index == -1)
-		return nullptr;
-
-	if (toDelete)
-	{
-		deleteEntity(index);
-	}
-
-	return entities_[index];
+	return index;
 }
 
 
 template<typename T>
-inline T AbsLoot<T>::getEntity(int i, bool toDelete)
+inline T AbsLoot<T>::getEntity(int i)
 {
-	if (toDelete)
-	{
-		deleteEntity(i);
-	}
 	return entities_[i];
 }
 

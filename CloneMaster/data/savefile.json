@@ -1,4 +1,6 @@
 {
+    "batteries": 0,
+    "can_clone": false,
     "current": "Cell",
     "dmg": 0,
     "inventory": null,

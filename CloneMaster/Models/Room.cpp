@@ -48,7 +48,7 @@ bool Room::getExitId(Direction dir, std::string& id)
 	return false;
 }
 
-int Room::getItemByName(const std::string& name)
+int Room::getItem(const std::string& name)
 {
 	int index = -1;
 	for (auto it = items_.begin(); it != items_.end(); it++)
@@ -64,17 +64,16 @@ int Room::getItemByName(const std::string& name)
 
 Item* Room::getItem(int i)
 {
-	Item* itemptr = items_[i];
-	items_.erase(items_.begin() + i);
-	return itemptr;
+	return items_[i];;
 }
 
-void Room::getItemClue(int i)
+void Room::deleteItem(int i)
 {
-	std::cout << items_[i]->getClue() << std::endl;
+	items_.erase(i + items_.begin());
 }
 
-int Room::getTriggerByName(const std::string& name)
+
+int Room::getTrigger(const std::string& name)
 {
 	int index = -1;
 	for (auto it = triggers_.begin(); it != triggers_.end(); it++)
@@ -88,35 +87,14 @@ int Room::getTriggerByName(const std::string& name)
 	return index;
 }
 
-void Room::getTriggerClue(int i)
+Trigger* Room::getTrigger(int i)
 {
-	std::cout << triggers_[i]->getClue() << std::endl;
+	return triggers_[i];
 }
 
-TriggerAction Room::getTriggerAction(int i)
+void Room::deleteTrigger(int i)
 {
-	return triggers_[i]->getAction();
-}
-
-Item* Room::triggerItem(int triggerInd, bool takeable)
-{
-	std::string entName = getTriggerEntity(triggerInd);
-	int itemInd = getItemByName(entName);
-	items_[itemInd]->setAvailable();
-	if (!takeable)
-	{
-		return nullptr;
-	}
-
-	return getItem(itemInd);
-}
-
-std::string Room::getTriggerEntity(int i)
-{
-	std::string entityName = triggers_[i]->getEntityName();
-	triggers_.erase(triggers_.begin() + i);
-
-	return entityName;
+	triggers_.erase(i + triggers_.begin());
 }
 
 void Room::openExit(const std::string& exitName)
@@ -130,7 +108,7 @@ void Room::openExit(const std::string& exitName)
 	}
 }
 
-NPC* Room::getNPCByName(const std::string& name)
+int Room::getNPC(const std::string& name)
 {
 	int index = -1;
 	for (auto it = npcs_.begin(); it != npcs_.end(); it++)
@@ -141,10 +119,13 @@ NPC* Room::getNPCByName(const std::string& name)
 			break;
 		}
 	}
-	if (index == -1)
-		return nullptr;
 
-	return npcs_[index];
+	return index;
+}
+
+NPC* Room::getNPC(int i)
+{
+	return npcs_[i];
 }
 
 void Room::deleteNPC(int i)

@@ -18,7 +18,9 @@ public:
 		squad_{},
 		dmg_{ 0 },
 		isInCombat_ {false},
-		currentEnemy_ {nullptr}
+		currentEnemy_ {nullptr},
+		canClone_ {false},
+		batteries_ {0}
 	{};
 
 	void play();
@@ -62,6 +64,25 @@ private:
 	//give smth to npc
 	void give(const std::string& item, const std::string& npc);
 	void give(int item, const std::string& npc);
+	//clone npc
+	void clone(const std::string& name);
+	// recruit npc in your squad
+	void recruit(const std::string& name);
+	// leave npc from your squad
+	void leave(const std::string& name);
+	void leave(int i);
+	// open some doors
+	void open(const std::string& trigger, const std::string& key);
+	void open(const std::string& trigger, int key);
+	void open(int trigger, int key);
+	void openExit(const std::string& exit);
+	void openItem(const std::string& item);
+	// use items on triggers
+	void use(const std::string& key, const std::string& trigger);
+	void use(int key, const std::string& trigger);
+	void use(int key, int trigger);
+	//show squad
+	void squad();
 	//quit game
 	void quit();
 
@@ -75,6 +96,8 @@ private:
 	int dmg_;
 	bool isInCombat_;
 	NPC* currentEnemy_;
+	bool canClone_;
+	int batteries_;
 };
 
 #endif // !_GAME_

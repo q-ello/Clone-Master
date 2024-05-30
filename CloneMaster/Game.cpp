@@ -172,6 +172,74 @@ void Game::updateState(Instruction instruction)
 		}
 		give(instruction.goal, instruction.object);
 		break;
+	case F_CLONE:
+		if (!canClone_)
+		{
+			std::cout << "You are a clone master, but you do not make clones with your willpower only." << std::endl;
+			return;
+		}
+		if (batteries_ == 0)
+		{
+			std::cout << "You don't have batteries to do that." << std::endl;
+			return;
+		}
+		if (instruction.goal == "me" || instruction.goal == "myself")
+		{
+			std::cout << "You really want to waste a battery to have a clone as weak as yourself?" << std::endl;
+			return;
+		}
+		clone(instruction.goal);
+		break;
+	case F_RECRUIT:
+		recruit(instruction.goal);
+		break;
+	case F_LEAVE:
+		if (instruction.goal == "")
+		{
+			std::cout << "Who do you want to leave?" << std::endl;
+			std::vector<std::string> names = squad_.getEntitiesNames();
+			names.push_back("No one");
+			int choice = Utils::menu(names);
+			if (choice == names.size() - 1)
+				return;
+			leave(choice);
+			return;
+		}
+		leave(instruction.goal);
+		break;
+	case F_OPEN:
+		if (instruction.object == "")
+		{
+			std::cout << "What do you want to use to open it?" << std::endl;
+			std::vector<std::string> names = inventory_.getEntitiesNames();
+			names.push_back("Nothing");
+			int choice = Utils::menu(names);
+			if (choice == names.size() - 1)
+				return;
+			open(instruction.goal, choice);
+			return;
+		}
+		open(instruction.goal, instruction.object);
+		break;
+	case F_USE:
+		if (instruction.object == "")
+		{
+			std::cout << "What do you want to use?" << std::endl;
+			std::vector<std::string> names = inventory_.getEntitiesNames();
+			names.push_back("Nothing");
+			int choice = Utils::menu(names);
+			if (choice == names.size() - 1)
+				return;
+			std::cout << "What do you want to use it on?" << std::endl;
+			std::getline(std::cin, instruction.goal);
+			use(choice, instruction.goal);
+			return;
+		}
+		use(instruction.object, instruction.goal);
+		break;
+	case F_SQUAD:
+		squad();
+		break;
 	default:
 		std::cout << "Excuse you?\n";
 		break;
@@ -327,7 +395,33 @@ void Game::save()
 
 	j.emplace("inventory", inventoryJson);
 
+	json squadJson;
+
+	for (const auto& npc : squad_.getEntities())
+	{
+		json npcJson;
+		npcJson["name"] = npc->getName();
+		npcJson["hp"] = npc->getHP();
+		npcJson["dmg"] = npc->damage();
+		npcJson["hit_chance"] = npc->getHitChance();
+		npcJson["can_clone"] = npc->canBeCloned();
+		npcJson["is_recruitable"] = npc->isRecrutable();
+		npcJson["in_room_alive"] = npc->getDescriptionAwake();
+		npcJson["in_room_dead"] = npc->getDescriptionUnconscious();
+		npcJson["greeting"] = npc->getGreeting();
+		npcJson["incorrect_item_response"] = npc->incorrectItemResponse();
+		npcJson["required_item"] = npc->requiredItem();
+		npcJson["has_item_response"] = npc->hasItemResponse();
+
+		squadJson.push_back(npcJson);
+	}
+
+	j.emplace("squad", squadJson);
+
 	j.emplace("dmg", dmg_);
+
+	j.emplace("can_clone", canClone_);
+	j.emplace("batteries", batteries_);
 
 	f << std::setw(4) << j << std::endl;
 
@@ -458,9 +552,43 @@ void Game::parseData(const json& data)
 		}
 	}
 
+	auto squadIt = data.find("squad");
+
+	if (squadIt != data.end())
+	{ 
+		for (json npcJson : *squadIt)
+		{
+			std::string name = npcJson.at("name");
+			int HP = npcJson.at("hp");
+			int dmg = npcJson.at("dmg");
+			int hitChance = npcJson.at("hit_chance");
+			bool canBeCloned = npcJson.at("can_clone");
+			bool isRecrutable = npcJson.at("is_recruitable");
+			std::string inRoomAwake = npcJson.at("in_room_alive");
+			std::string inRoomUnconscious = npcJson.at("in_room_dead");
+			std::string greeting = npcJson.at("greeting");
+			std::string incorrectItemResponse = npcJson.at("incorrect_item_response");
+			std::string requiredItem = npcJson.at("required_item");
+			std::string hasItemResponse = npcJson.at("has_item_response");
+
+			squad_.addEntity(new NPC(name, dmg, hitChance, inRoomAwake, inRoomUnconscious, incorrectItemResponse, requiredItem, hasItemResponse,
+				HP, greeting, canBeCloned, isRecrutable));
+		}
+	}
+
 	if (data.contains("dmg"))
 	{
 		dmg_ = data.at("dmg");
+	}
+
+	if (data.contains("can_clone"))
+	{
+		canClone_ = data.at("can_clone");
+	}
+
+	if (data.contains("batteries"))
+	{
+		batteries_ = data.at("batteries");
 	}
 }
 
@@ -476,6 +604,7 @@ void Game::help()
 	std::cout << "- drop smth - drop something from your inventory back into the room" << std::endl;
 	std::cout << "- examine smth - maybe you could find out some clues ;)" << std::endl;
 	std::cout << "- use smth on smth/some other commands - sometimes you just need to give it a try" << std::endl;
+	std::cout << "- squad - look who is in your squad" << std::endl;
 	std::cout << "- clone sb - you're a clone master after all" << std::endl;
 	std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
 	std::cout << "- give smth to sb - sometimes you can just negotiate" << std::endl;
@@ -493,9 +622,9 @@ void Game::take(const std::string& item)
 		return;
 	}
 
-	int i = currentRoom_->getItemByName(item);
+	int i = currentRoom_->getItem(item);
 
-	if (i == -1 || !currentRoom_->itemIsAvailable(i))
+	if (i == -1)
 	{
 		std::cout << "You cannot take " << item << "." << std::endl;
 		return;
@@ -503,26 +632,44 @@ void Game::take(const std::string& item)
 
 	Item* neededItem = currentRoom_->getItem(i);
 
-	inventory_.addEntity(std::move(neededItem));
+	if (!neededItem->isAvailable())
+	{
+		std::cout << "You cannot take " << item << "." << std::endl;
+		return;
+	}
+
+	currentRoom_->deleteItem(i);
+
+	if (neededItem->getName() == "Battery")
+	{
+		batteries_++;
+		delete neededItem;
+	}
+	else
+	{
+		inventory_.addEntity(std::move(neededItem));
+	}
+
 	std::cout << "Taken.\n";
 }
 
 void Game::drop(const std::string& name)
 {
-	Item* item = inventory_.getEntity(name, true);
+	int i = inventory_.getEntity(name);
 
-	if (item == nullptr)
+	if (i == -1)
 	{
 		std::cout << "You do not even have " << name << " in your inventory." << std::endl;
 		return;
 	}
 
-	currentRoom_->addItem(std::move(item));
+	drop(i);
 }
 
 void Game::drop(int i)
 {
-	Item* droppedItem = inventory_.getEntity(i, true);
+	Item* droppedItem = inventory_.getEntity(i);
+	inventory_.deleteEntity(i);
 
 	currentRoom_->addItem(std::move(droppedItem));
 
@@ -533,55 +680,50 @@ void Game::printInventory()
 {
 	if (inventory_.isEmpty())
 	{
-		std::cout << "You have nothing.\n";
-		return;
+		std::cout << "You have nothing in your inventory.\n";
+	}
+	else
+	{
+		std::cout << "Here are the items you possess:" << std::endl;
+		inventory_.printInfo();
 	}
 
-	std::cout << "Here are the items you possess:" << std::endl;
-	inventory_.printInfo();
+
+	std::cout << "Batteries: " << batteries_ << std::endl;
 }
 
 void Game::examine(const std::string& name)
 {
-	int i = currentRoom_->getItemByName(name);
-	if (i != -1 && currentRoom_->itemIsAvailable(i))
-	{
-		currentRoom_->getItemClue(i);
-		return;
-	}
-
-	i = currentRoom_->getTriggerByName(name);
+	int i = currentRoom_->getItem(name);
 	if (i != -1)
 	{
-		currentRoom_->getTriggerClue(i);
-		if (currentRoom_->getTriggerAction(i) == T_EXAMINE)
+		Item* item = currentRoom_->getItem(i);
+		if (item->isAvailable())
 		{
-			if (inventory_.isFull())
-			{
-				currentRoom_->triggerItem(i, false);
-				std::cout << "You don't have enough space in your inventory to take it though." << std::endl;
-			}
-			else
-			{
-				Item* openedItem = currentRoom_->triggerItem(i, true);
-				if (dmg_ == 0 && openedItem->getName() == "shard")
-				{
-					dmg_ += 1;
-					std::cout << "Good, now you have a weapon." << std::endl;
-					delete openedItem;
-					return;
-				}
-				inventory_.addEntity(std::move(openedItem));
-				std::cout << "You take it." << std::endl;
-			}
+			std::cout << item->getClue() << std::endl;
+			return;
+		}
+	}
+
+	i = currentRoom_->getTrigger(name);
+	if (i != -1)
+	{
+		Trigger* trigger = currentRoom_->getTrigger(i);
+		std::cout << trigger->getClue() << std::endl;
+		if (trigger->getAction() == T_EXAMINE)
+		{
+			currentRoom_->deleteTrigger(i);
+
+			openItem(trigger->getEntityName());
 		}
 		return;
 	}
 
-	Item* item = inventory_.getEntity(name, false);
-	if (item != nullptr)
+	i = inventory_.getEntity(name);
+
+	if (i != -1)
 	{
-		std::cout << item->getClue() << std::endl;
+		std::cout << inventory_.getEntity(i)->getClue() << std::endl;
 		return;
 	}
 
@@ -590,29 +732,33 @@ void Game::examine(const std::string& name)
 
 void Game::move(const std::string& name)
 {
-	int i = currentRoom_->getTriggerByName(name);
-	if (i != -1 && currentRoom_->getTriggerAction(i) == T_MOVE)
+	int i = currentRoom_->getTrigger(name);
+	if (i != -1)
 	{
-		std::string openedExit = currentRoom_->getTriggerEntity(i);
-		currentRoom_->openExit(openedExit);
-		rooms_[openedExit]->openExit(currentRoom_->getName());
+		Trigger* trigger = currentRoom_->getTrigger(i);
 
-		std::cout << "You moved the " << name << "." << std::endl;
-		return;
+		if (trigger->getAction() == T_MOVE)
+		{
+			currentRoom_->deleteTrigger(i);
+			openExit(trigger->getEntityName());
+			std::cout << "You moved the " << name << ".\n";
+			return;
+		}
 	}
-
 	std::cout << "You cannot move " << name << "." << std::endl;
 }
 
 void Game::attack(const std::string& name)
 {
-	NPC* attacked = currentRoom_->getNPCByName(name);
+	int i = currentRoom_->getNPC(name);
 
-	if (attacked == nullptr)
+	if (i == -1)
 	{
 		std::cout << "You cannot attack " << name << ".\n";
 		return;
 	}
+
+	NPC* attacked = currentRoom_->getNPC(i);
 
 	if (!attacked->isAwake())
 	{
@@ -667,7 +813,7 @@ void Game::getAttacked()
 
 	int who = rand() % sizeof(squad_);
 
-	NPC* attackedMember = squad_.getEntity(who, false);
+	NPC* attackedMember = squad_.getEntity(who);
 
 	attackedMember->takeDamage(currentEnemy_->damage());
 
@@ -680,21 +826,25 @@ void Game::getAttacked()
 
 void Game::give(const std::string& item, const std::string& npc)
 {
-	Item* givenItem = inventory_.getEntity(item);
+	int iItem = inventory_.getEntity(item);
 
-	if (givenItem == nullptr)
+	if (iItem == -1)
 	{
 		std::cout << "You do not have " << item << " to give." << std::endl;
 		return;
 	}
 
-	NPC* npcToGive = currentRoom_->getNPCByName(npc);
+	Item* givenItem = inventory_.getEntity(iItem);
 
-	if (npcToGive == nullptr)
+	int iNPC = currentRoom_->getNPC(npc);
+
+	if (iNPC == -1)
 	{
 		std::cout << "There is no " << npc << " in the room." << std::endl;
 		return;
 	}
+
+	NPC* npcToGive = currentRoom_->getNPC(iNPC);
 
 	Utils::setColor(14);
 	std::cout << npcToGive->getName() << ": ";
@@ -706,7 +856,7 @@ void Game::give(const std::string& item, const std::string& npc)
 		std::cout << "..." << std::endl << "..." << std::endl << "..." << std::endl;
 		std::cout << "Andrew fell asleep, drowsy from smoking." << std::endl;
 		npcToGive->setHP(0);
-		inventory_.deleteEntity(item);
+		inventory_.deleteEntity(iItem);
 		return;
 	}
 	else
@@ -720,13 +870,15 @@ void Game::give(int item, const std::string& npc)
 {
 	Item* givenItem = inventory_.getEntity(item);
 
-	NPC* npcToGive = currentRoom_->getNPCByName(npc);
+	int i = currentRoom_->getNPC(npc);
 
-	if (npcToGive == nullptr)
+	if (i == -1)
 	{
 		std::cout << "There is no " << npc << " in the room." << std::endl;
 		return;
 	}
+
+	NPC* npcToGive = currentRoom_->getNPC(i);
 
 	Utils::setColor(14);
 	std::cout << npcToGive->getName() << ": ";
@@ -746,6 +898,268 @@ void Game::give(int item, const std::string& npc)
 		std::cout << npcToGive->incorrectItemResponse() << std::endl;
 		return;
 	}
+}
+
+void Game::clone(const std::string& name)
+{
+
+	int i = currentRoom_->getNPC(name);
+
+	NPC* npcToClone;
+
+	if (i != -1)
+	{
+		npcToClone = currentRoom_->getNPC(i);
+	}
+	else {
+		i = squad_.getEntity(name);
+		if (i != -1)
+		{
+			npcToClone = squad_.getEntity(i);
+		}
+		else {
+			std::cout << "You cannot clone " << name << ".\n";
+			return;
+		}
+	}
+	
+	if (!npcToClone->canBeCloned())
+	{
+		std::cout << "You cannot clone " << name << ".\n";
+		return;
+	}
+
+	NPC* clone = new NPC("Clone " + npcToClone->getName(), npcToClone->damage(), npcToClone->getHitChance(), npcToClone->getDescriptionAwake(),
+		npcToClone->getDescriptionUnconscious());
+
+	batteries_--;
+
+	std::cout << "You make a full copy of " << npcToClone->getName() << ". Although it is a little bit more fragile and dumber." << std::endl;
+
+	if (squad_.isFull())
+	{
+		std::cout << "Your squad is already a bit full though, so you cannot take this clone with you for now." << std::endl;
+		currentRoom_->addNPC(std::move(clone));
+	}
+	else {
+		std::cout << "Now this clone will follow you along until you leave them or they die." << std::endl;
+		squad_.addEntity(std::move(clone));
+	}
+}
+
+void Game::recruit(const std::string& name)
+{
+	int i = currentRoom_->getNPC(name);
+
+	if (i == -1)
+	{
+		std::cout << "You cannot recruit " << name << ".\n";
+		return;
+	}
+
+	NPC* npc = currentRoom_->getNPC(i);
+
+	if (!npc->isAwake())
+	{
+		std::cout << "Why do you want to recruit an unconscious body?" << std::endl;
+		return;
+	}
+
+	if (!npc->isRecrutable())
+	{
+		std::cout << "They would rather die than join you." << std::endl;
+		return;
+	}
+
+	std::cout << npc->getName() << " joins your squad." << std::endl;
+	currentRoom_->deleteNPC(i);
+}
+
+void Game::leave(const std::string& name)
+{
+	int i = squad_.getEntity(name);
+
+	if (i == -1)
+	{
+		std::cout << name << " is not in your squad." << std::endl;
+		return;
+	}
+
+	leave(i);
+}
+
+void Game::leave(int i)
+{
+	NPC* npc = squad_.getEntity(i);
+	if (npc->canBeCloned())
+	{
+		std::cout << npc->getName() << " doesn't want to be left behind." << std::endl;
+		return;
+	}
+
+	squad_.deleteEntity(i);
+	currentRoom_->addNPC(std::move(npc));
+	std::cout << "You leave him in this room to stand by." << std::endl;
+}
+
+void Game::open(const std::string& trigger, const std::string& key)
+{
+	int iTrigger = currentRoom_->getTrigger(trigger);
+
+	if (iTrigger == -1)
+	{
+		std::cout << "You cannot open " << trigger << ".\n";
+		return;
+	}
+
+	int iKey = inventory_.getEntity(key);
+
+	if (iKey == -1)
+	{
+		std::cout << "You do not have " << key << ".\n";
+		return;
+	}
+
+	open(iTrigger, iKey);
+}
+
+void Game::open(const std::string& trigger, int key)
+{
+	int i = currentRoom_->getTrigger(trigger);
+
+	if (i == -1)
+	{
+		std::cout << "You cannot open " << trigger << ".\n";
+		return;
+	}
+
+	open(i, key);
+}
+
+void Game::open(int iTrigger, int iKey)
+{
+	Trigger* trigger = currentRoom_->getTrigger(iTrigger);
+
+	if (trigger->getAction() != T_OPEN)
+	{
+		std::cout << "You cannot open " << trigger->getName() << ".\n";
+		return;
+	}
+
+	Item* key = inventory_.getEntity(iKey);
+
+	if (!Utils::toCompare(key->getName(), trigger->getKey()))
+	{
+		std::cout << "You cannot open " << trigger->getName() << " with " << key->getName() << ".\n";
+		return;
+	}
+
+	currentRoom_->deleteTrigger(iTrigger);
+	inventory_.deleteEntity(iKey);
+
+	openExit(trigger->getEntityName());
+
+	std::cout << "You opened the " << trigger->getName();
+}
+
+void Game::openExit(const std::string& exit)
+{
+	currentRoom_->openExit(exit);
+	rooms_[exit]->openExit(currentRoom_->getName());
+
+	std::cout << "The way to " << exit << " has been opened." << std::endl;
+}
+
+void Game::openItem(const std::string& item)
+{
+	int iItem = currentRoom_->getItem(item);
+
+	Item* openedItem = currentRoom_->getItem(iItem);
+
+	openedItem->setAvailable();
+
+	if (dmg_ == 0 && openedItem->getName() == "shard")
+	{
+		dmg_ = 1;
+		std::cout << "Good, now you have a weapon." << std::endl;
+		delete openedItem;
+		currentRoom_->deleteItem(iItem);
+		return;
+	}
+
+	if (inventory_.isFull())
+	{
+		std::cout << "You don't have enough space in your inventory to take it though." << std::endl;
+		return;
+	}
+
+	currentRoom_->deleteItem(iItem);
+	inventory_.addEntity(std::move(openedItem));
+	std::cout << "You take it." << std::endl;
+}
+
+void Game::use(const std::string& key, const std::string& trigger)
+{
+	int iKey = inventory_.getEntity(key);
+
+	if (iKey == -1)
+	{
+		std::cout << "You do not have " << key << " in your inventory." << std::endl;
+		return;
+	}
+
+	use(iKey, trigger);
+}
+
+void Game::use(int key, const std::string& trigger)
+{
+	int iTrigger = currentRoom_->getTrigger(trigger);
+
+	if (iTrigger == -1)
+	{
+		std::cout << "You cannot use this on " << trigger << ".\n";
+		return;
+	}
+
+	use(key, iTrigger);
+}
+
+void Game::use(int iKey, int iTrigger)
+{
+	Trigger* trigger = currentRoom_->getTrigger(iTrigger);
+
+	Item* item = inventory_.getEntity(iKey);
+
+	if (!Utils::toCompare(trigger->getEntityName(), item->getName()))
+	{
+		std::cout << "You cannot use " << item->getName() << " on " << trigger->getName() << ".\n";
+		return;
+	}
+
+	currentRoom_->deleteTrigger(iTrigger);
+	inventory_.deleteEntity(iKey);
+
+	if (trigger->getType() == T_ITEM)
+	{
+		openItem(trigger->getKey());
+	}
+
+	if (trigger->getType() == T_EXIT)
+	{
+		openExit(trigger->getEntityName());
+		return;
+	}
+}
+
+void Game::squad()
+{
+	if (squad_.isEmpty())
+	{
+		std::cout << "You have nobody by your side" << std::endl;
+		return;
+	}
+	std::cout << "Here is your squad:" << std::endl;
+	squad_.printInfo();
 }
 
 void Game::quit()
