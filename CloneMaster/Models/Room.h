@@ -77,7 +77,7 @@ public:
 	//add trigger to the room
 	void addTrigger(Trigger* trigger)
 	{
-		triggers_.push_back(std::move(trigger));
+		triggers_.push_back(trigger);
 	}
 
 	//get Trigger

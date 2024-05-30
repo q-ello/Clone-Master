@@ -327,8 +327,10 @@ void Game::save()
 			if (trigger->getAction() != T_NONE)
 			{
 				json triggerInfo;
-				triggerInfo["type"] = trigger->getType();
-				triggerInfo["action"] = trigger->getAction();
+				TriggerAction action = trigger->getAction();
+
+				triggerInfo["type"] = TriggerTypesToString.at(trigger->getType());
+				triggerInfo["action"] = TriggerActionsToString.at(trigger->getAction());
 				triggerInfo["name"] = trigger->getEntityName();
 				if (trigger->getKey() != "")
 				{
@@ -337,6 +339,7 @@ void Game::save()
 
 				triggerJson.emplace("trigger", triggerInfo);
 			}
+			triggersJson.push_back(triggerJson);
 		}
 
 		roomJson.emplace("triggers", triggersJson);
@@ -493,7 +496,9 @@ void Game::parseData(const json& data)
 
 					TriggerType type = TriggerTypesToEnum.at(triggerInfo.at("type"));
 
-					newRoom->addTrigger(new Trigger(triggerName, triggerClue, entityName, action, key, type));
+					Trigger* trig = new Trigger(triggerName, triggerClue, entityName, action, key, type);
+
+					newRoom->addTrigger(std::move(trig));
 					
 				}
 				else {
@@ -821,7 +826,7 @@ void Game::attack()
 	if (currentEnemy_->getName() == "Guard Andrew")
 	{
 		std::cout << "You sneak out cell key from his pocket." << std::endl;
-		openItem("Cell Key");
+		openItem("Key");
 	}
 
 	isInCombat_ = false;
@@ -883,7 +888,7 @@ void Game::give(const std::string& item, const std::string& npc)
 		npcToGive->setHP(0);
 		inventory_.deleteEntity(iItem);
 		std::cout << "You sneak out cell key from his pocket." << std::endl;
-		openItem("Cell Key");
+		openItem("Key");
 		return;
 	}
 	else
@@ -1157,7 +1162,7 @@ void Game::use(int iKey, int iTrigger)
 
 	Item* item = inventory_.getEntity(iKey);
 
-	if (!Utils::toCompare(trigger->getEntityName(), item->getName()))
+	if (!Utils::toCompare(trigger->getKey(), item->getName()))
 	{
 		std::cout << "You cannot use " << item->getName() << " on " << trigger->getName() << ".\n";
 		return;

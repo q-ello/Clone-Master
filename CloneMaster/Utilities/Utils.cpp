@@ -31,10 +31,20 @@ bool Utils::toCompare(const std::string& a, const std::string& b)
 	std::string lowA = toLowerAndTrim(a);
 	std::string lowB = toLower(b);
 	std::string delimeter = " ";
-	size_t pos = lowB.find(delimeter);
-	if (pos != std::string::npos)
+	size_t posB = lowB.find(delimeter);
+	size_t posA = lowA.find(delimeter);
+	if (posA != std::string::npos)
 	{
-		return lowA == lowB.substr(pos + 1);
+		if (posB != std::string::npos)
+		{
+			return lowA.substr(posA + 1) == lowB.substr(posB + 1);
+		}
+
+		return lowA.substr(posA + 1) == lowB;
+	}
+	if (posB != std::string::npos)
+	{
+		return lowA == lowB.substr(posB + 1);
 	}
 	return lowA == lowB;
 }

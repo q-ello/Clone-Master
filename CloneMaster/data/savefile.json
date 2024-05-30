@@ -1,23 +1,29 @@
 {
-    "batteries": 0,
     "can_clone": false,
+    "charges": 0,
     "current": "Cell",
-    "dmg": 0,
-    "inventory": null,
+    "dmg": 1,
+    "inventory": [
+        {
+            "clue": "You could use it to unlock the cell door",
+            "description": "You see the cell key",
+            "name": "Cell Key"
+        }
+    ],
     "npcs": [
         {
             "can_clone": true,
             "dmg": 1,
-            "greeting": "Hey? I'm not allowed to talk to prisoners, I guess...",
+            "greeting": "Hey? I'm not allowed to talk to prisoners, I guess…",
             "has_item_response": "Wow, thank you. You are not as bad as the guys say.",
             "hit_chance": 10,
-            "hp": 1,
-            "in_room_alive": "The hallway is patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.",
+            "hp": 0,
+            "in_room_alive": " The hallway is patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.",
             "in_room_dead": "You see the body of Andrew",
             "incorrect_item_response": "What? How did you get this?!",
             "is_recruitable": false,
             "name": "Guard Andrew",
-            "required_item": "Cigarettes",
+            "required_item": "drug",
             "rooms": [
                 "Cell",
                 "Hallway 2"
@@ -59,7 +65,7 @@
         },
         {
             "can_clone": false,
-            "dmg": 4,
+            "dmg": 1,
             "greeting": "Beep-beep",
             "has_item_response": "",
             "hit_chance": 7,
@@ -76,7 +82,7 @@
         },
         {
             "can_clone": false,
-            "dmg": 7,
+            "dmg": 3,
             "greeting": "Beep-beep",
             "has_item_response": "",
             "hit_chance": 7,
@@ -162,16 +168,25 @@
                     "clue": "You don't have the healthiest habits. Neither does the guard, Andrew.",
                     "description": "There is a pack of cigarettes laying around.",
                     "name": "Cigarettes"
-                },
-                {
-                    "available": false,
-                    "clue": "A shard of a ceramic plate. It is sharp.",
-                    "description": "You see a sharp ceramic shard.",
-                    "name": "shard"
                 }
             ],
             "name": "Cell",
-            "triggers": null
+            "triggers": [
+                {
+                    "clue": "A barred door. You can't squeeze through bars, but you can reach your hand out.",
+                    "name": "door",
+                    "trigger": {
+                        "action": "open",
+                        "key": "Cell Key",
+                        "name": "Hallway 2",
+                        "type": "exit"
+                    }
+                },
+                {
+                    "clue": "A hole leads down to a hideout you've made while the guards weren't looking.",
+                    "name": "hole"
+                }
+            ]
         },
         {
             "description": "",
@@ -219,9 +234,27 @@
                     "name": "Hallway 1"
                 }
             ],
-            "items": null,
+            "items": [
+                {
+                    "available": false,
+                    "clue": "You could use the fingerprint to unlock the door in the Staff room",
+                    "description": "You see a piece of duct tape with a fingerprint",
+                    "name": "fingerprint"
+                }
+            ],
             "name": "Hallway 2",
-            "triggers": null
+            "triggers": [
+                {
+                    "clue": "You could use the duct tape to take Andrew's fingerprints. This will help you unlock the fingerprint reading panel in the staff room.",
+                    "name": "Guard Andrew",
+                    "trigger": {
+                        "action": "use",
+                        "key": "duct tape",
+                        "name": "fingerprint",
+                        "type": "item"
+                    }
+                }
+            ]
         },
         {
             "description": "",
@@ -236,7 +269,13 @@
                     "name": "2nd floor"
                 }
             ],
-            "items": null,
+            "items": [
+                {
+                    "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
+                    "description": "You see a charge to your cloning device",
+                    "name": "Charge"
+                }
+            ],
             "name": "Hallway 3",
             "triggers": null
         },
@@ -258,15 +297,30 @@
                     "clue": "In a place like this, you need a spark in your life.",
                     "description": "You see your lighter.",
                     "name": "Lighter"
-                },
-                {
-                    "clue": "Take enough of these and you will sleep soundly.",
-                    "description": "You see sedatives you've snuck into the prison.",
-                    "name": "Sedatives"
                 }
             ],
             "name": "Hideout",
-            "triggers": null
+            "triggers": [
+                {
+                    "clue": "The periodic table hides the ventilation leading to the staff room",
+                    "name": "Periodic Table",
+                    "trigger": {
+                        "action": "move",
+                        "name": "Staff",
+                        "type": "exit"
+                    }
+                },
+                {
+                    "clue": "Take enough of these and you will sleep soundly.",
+                    "name": "Sedatives",
+                    "trigger": {
+                        "action": "use",
+                        "key": "Cigarettes",
+                        "name": "drug",
+                        "type": "item"
+                    }
+                }
+            ]
         },
         {
             "description": "",
@@ -280,7 +334,13 @@
                     "name": "Lower Hallway 1"
                 }
             ],
-            "items": null,
+            "items": [
+                {
+                    "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
+                    "description": "You see a charge to your cloning device",
+                    "name": "Charge"
+                }
+            ],
             "name": "Lower Hallway 2",
             "triggers": null
         },
@@ -316,17 +376,28 @@
                     "name": "Lower Hallway 1"
                 }
             ],
-            "items": null,
+            "items": [
+                {
+                    "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
+                    "description": "You see a charge to your cloning device",
+                    "name": "Charge"
+                }
+            ],
             "name": "Medbay",
             "triggers": null
         },
         {
-            "description": "Luckily, no one is here.The door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+            "description": "You enter the staff room on the 2nd floor. Luckily, no one is here.\nThe door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
             "exits": [
                 {
                     "available": false,
-                    "direction": "east",
-                    "name": "2nd floor"
+                    "direction": "north",
+                    "name": "Upper Hallway 2"
+                },
+                {
+                    "available": false,
+                    "direction": "south",
+                    "name": "Lower Hallway 3"
                 },
                 {
                     "direction": "down",
@@ -341,7 +412,20 @@
                 }
             ],
             "name": "Staff",
-            "triggers": null
+            "triggers": [
+                {
+                    "clue": "An office desk.",
+                    "name": "Table"
+                },
+                {
+                    "clue": "You see a locker belonging to guard Andrew.",
+                    "name": "Lockers"
+                },
+                {
+                    "clue": "You find a pack of sclerosis pills and a LOT of reminders. Great.",
+                    "name": "locker"
+                }
+            ]
         },
         {
             "description": "",
@@ -352,7 +436,18 @@
                     "name": "Hallway 1"
                 }
             ],
-            "items": null,
+            "items": [
+                {
+                    "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
+                    "description": "You see a charge to your cloning device",
+                    "name": "Charge"
+                },
+                {
+                    "clue": "Your cloning device allows you to clone people",
+                    "description": "You see your most precious cloning device. You must take it now!",
+                    "name": "Cloning Device"
+                }
+            ],
             "name": "Storage",
             "triggers": null
         },
@@ -388,5 +483,6 @@
             "name": "Upper Hallway 2",
             "triggers": null
         }
-    ]
+    ],
+    "squad": null
 }
