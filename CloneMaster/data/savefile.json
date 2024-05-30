@@ -1,13 +1,13 @@
 {
     "can_clone": false,
     "charges": 0,
-    "current": "Cell",
+    "current": "Hallway 2",
     "dmg": 1,
     "inventory": [
         {
-            "clue": "You could use it to unlock the cell door",
-            "description": "You see the cell key",
-            "name": "Cell Key"
+            "clue": "You have some troubles finding the edge of the tape, but you manage to do it.",
+            "description": "You see duct tape.",
+            "name": "Duct tape"
         }
     ],
     "npcs": [
@@ -154,7 +154,6 @@
             "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.",
             "exits": [
                 {
-                    "available": false,
                     "direction": "north",
                     "name": "Hallway 2"
                 },
@@ -172,16 +171,6 @@
             ],
             "name": "Cell",
             "triggers": [
-                {
-                    "clue": "A barred door. You can't squeeze through bars, but you can reach your hand out.",
-                    "name": "door",
-                    "trigger": {
-                        "action": "open",
-                        "key": "Cell Key",
-                        "name": "Hallway 2",
-                        "type": "exit"
-                    }
-                },
                 {
                     "clue": "A hole leads down to a hideout you've made while the guards weren't looking.",
                     "name": "hole"
@@ -225,7 +214,6 @@
                     "name": "Hallway 3"
                 },
                 {
-                    "available": false,
                     "direction": "south",
                     "name": "Cell"
                 },
@@ -287,7 +275,6 @@
                     "name": "Cell"
                 },
                 {
-                    "available": false,
                     "direction": "up",
                     "name": "Staff"
                 }
@@ -301,15 +288,6 @@
             ],
             "name": "Hideout",
             "triggers": [
-                {
-                    "clue": "The periodic table hides the ventilation leading to the staff room",
-                    "name": "Periodic Table",
-                    "trigger": {
-                        "action": "move",
-                        "name": "Staff",
-                        "type": "exit"
-                    }
-                },
                 {
                     "clue": "Take enough of these and you will sleep soundly.",
                     "name": "Sedatives",
@@ -404,13 +382,7 @@
                     "name": "Hideout"
                 }
             ],
-            "items": [
-                {
-                    "clue": "You have some troubles finding the edge of the tape, but you manage to do it.",
-                    "description": "You see duct tape.",
-                    "name": "Duct tape"
-                }
-            ],
+            "items": null,
             "name": "Staff",
             "triggers": [
                 {

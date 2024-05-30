@@ -1127,7 +1127,7 @@ void Game::openItem(const std::string& item)
 
 	currentRoom_->deleteItem(iItem);
 	inventory_.addEntity(std::move(openedItem));
-	std::cout << "You take it." << std::endl;
+	std::cout << "You take " << openedItem->getName() << std::endl;
 }
 
 void Game::use(const std::string& key, const std::string& trigger)
@@ -1173,7 +1173,7 @@ void Game::use(int iKey, int iTrigger)
 
 	if (trigger->getType() == T_ITEM)
 	{
-		openItem(trigger->getKey());
+		openItem(trigger->getEntityName());
 	}
 
 	if (trigger->getType() == T_EXIT)
