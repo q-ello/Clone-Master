@@ -1,2 +1,5 @@
 ﻿  Game.cpp
+  main.cpp
+D:\Juliena\learning is knowing\c++ project mud\CloneMaster\CloneMaster\main.cpp(5,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Создание кода...
   CloneMaster.vcxproj -> D:\Juliena\learning is knowing\c++ project mud\CloneMaster\x64\Debug\CloneMaster.exe

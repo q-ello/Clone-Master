@@ -178,9 +178,9 @@ void Game::updateState(Instruction instruction)
 			std::cout << "You are a clone master, but you do not make clones with your willpower only." << std::endl;
 			return;
 		}
-		if (batteries_ == 0)
+		if (charges_ == 0)
 		{
-			std::cout << "You don't have batteries to do that." << std::endl;
+			std::cout << "You don't have charges to do that." << std::endl;
 			return;
 		}
 		if (instruction.goal == "me" || instruction.goal == "myself")
@@ -421,7 +421,7 @@ void Game::save()
 	j.emplace("dmg", dmg_);
 
 	j.emplace("can_clone", canClone_);
-	j.emplace("batteries", batteries_);
+	j.emplace("charges", charges_);
 
 	f << std::setw(4) << j << std::endl;
 
@@ -586,9 +586,9 @@ void Game::parseData(const json& data)
 		canClone_ = data.at("can_clone");
 	}
 
-	if (data.contains("batteries"))
+	if (data.contains("charges"))
 	{
-		batteries_ = data.at("batteries");
+		charges_ = data.at("charges");
 	}
 }
 
@@ -636,9 +636,9 @@ void Game::take(const std::string& item)
 	}
 
 
-	if (item == "battery")
+	if (item == "charge")
 	{
-		batteries_++;
+		charges_++;
 		currentRoom_->deleteItem(i);
 		return;
 	}
@@ -707,7 +707,7 @@ void Game::printInventory()
 	}
 
 
-	std::cout << "Batteries: " << batteries_ << std::endl;
+	std::cout << "Charges: " << charges_ << std::endl;
 }
 
 void Game::examine(const std::string& name)
@@ -758,8 +758,8 @@ void Game::move(const std::string& name)
 		if (trigger->getAction() == T_MOVE)
 		{
 			currentRoom_->deleteTrigger(i);
-			openExit(trigger->getEntityName());
 			std::cout << "You moved the " << name << ".\n";
+			openExit(trigger->getEntityName());
 			return;
 		}
 	}
@@ -959,7 +959,7 @@ void Game::clone(const std::string& name)
 	NPC* clone = new NPC("Clone " + npcToClone->getName(), npcToClone->damage(), npcToClone->getHitChance(), npcToClone->getDescriptionAwake(),
 		npcToClone->getDescriptionUnconscious());
 
-	batteries_--;
+	charges_--;
 
 	std::cout << "You make a full copy of " << npcToClone->getName() << ". Although it is a little bit more fragile and dumber." << std::endl;
 

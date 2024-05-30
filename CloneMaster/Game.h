@@ -20,7 +20,7 @@ public:
 		isInCombat_ {false},
 		currentEnemy_ {nullptr},
 		canClone_ {false},
-		batteries_ {0}
+		charges_ {0}
 	{};
 
 	void play();
@@ -97,7 +97,7 @@ private:
 	bool isInCombat_;
 	NPC* currentEnemy_;
 	bool canClone_;
-	int batteries_;
+	int charges_;
 };
 
 #endif // !_GAME_
