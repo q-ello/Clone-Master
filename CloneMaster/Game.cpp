@@ -625,7 +625,7 @@ void Game::take(const std::string& item)
 
 	Item* neededItem = currentRoom_->getItem(i);
 
-	if (item == "device")
+	if (canClone_ == false && neededItem->getName() == "Cloning Device")
 	{
 		canClone_ = true;
 		std::cout << "Now you are in your whole power!" << std::endl;
@@ -706,8 +706,8 @@ void Game::printInventory()
 		inventory_.printInfo();
 	}
 
-
-	std::cout << "Charges: " << charges_ << std::endl;
+	if (canClone_)
+		std::cout << "Charges: " << charges_ << std::endl;
 }
 
 void Game::examine(const std::string& name)
@@ -768,6 +768,12 @@ void Game::move(const std::string& name)
 
 void Game::attack(const std::string& name)
 {
+	if (dmg_ == 0)
+	{
+		std::cout << "You really think you can take someone with bare hands?" << std::endl;
+		return;
+	}
+
 	int i = currentRoom_->getNPC(name);
 
 	if (i == -1)
@@ -799,11 +805,6 @@ void Game::attack()
 	 
 	if (squad_.isEmpty())
 	{
-		if (dmg_ > 0)
-		{
-			std::cout << "You really think you can take someone with bare hands?" << std::endl;
-			return;
-		}
 		std::cout << "You attack him with your shard." << std::endl;
 	}
 	else
