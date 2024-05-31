@@ -8,7 +8,7 @@
       "can_clone": true,
       "is_recruitable": false,
       "required_item": "drug",
-      "greeting": "Hey? I'm not allowed to talk to prisoners, I guess…",
+      "greeting": "Hey? I'm not allowed to talk to prisoners, I guess.",
       "has_item_response": "Wow, thank you. You are not as bad as the guys say.",
       "incorrect_item_response": "What? How did you get this?!",
       "in_room_alive": " The hallway is patrolled by a single guard, Andrew. You know that guy: he's not exactly the brightest. He takes some pills and smokes on duty.",
@@ -207,7 +207,7 @@
     },
     {
       "name": "Hideout",
-      "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things. A periodic table of elements hangs on the wall.",
+      "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things, like sedatives. A periodic table of elements hangs on the wall.",
       "exits": [
         {
           "name": "Cell",
@@ -224,6 +224,13 @@
           "name": "Lighter",
           "clue": "In a place like this, you need a spark in your life.",
           "description": "You see your lighter."
+        },
+
+        {
+          "name": "drug",
+          "clue": "take it and you will sleep soundly",
+          "description": "you see drugged cigarettes",
+          "available": false
         }
       ],
       "triggers": [
@@ -295,8 +302,7 @@
       "exits": [
         {
           "name": "Storage",
-          "direction": "north",
-          "available": false
+          "direction": "north"
         },
         {
           "name": "Hallway 2",
@@ -370,8 +376,7 @@
       "exits": [
         {
           "name": "Hallway 1",
-          "direction": "south",
-          "available": false
+          "direction": "south"
         }
       ],
       "items": [

@@ -12,8 +12,8 @@ public:
 	NPC(const std::string& name,
 		int dmg,
 		int hitChance,
-		const std::string& inRoomAwake,
-		const std::string& inRoomUnconscious,
+		const std::string& inRoomAwake = "",
+		const std::string& inRoomUnconscious = "",
 		const std::string& incorrectItemResponse = "",
 		const std::string& requiredItem = "",
 		const std::string& hasItemResponse = "",
@@ -21,19 +21,7 @@ public:
 		const std::string& greeting = "Argh...",
 		bool canBeCloned = false,
 		bool isRecrutable = true)
-		: name_{ name }
-		, dmg_{ dmg }
-		, hitChance_{ hitChance }
-		, inRoomAwake_ {inRoomAwake}
-		, inRoomUnconscious_ {inRoomUnconscious}
-		, incorrectItemResponse_ {incorrectItemResponse}
-		, requiredItem_ {requiredItem}
-		, hasItemResponse_ {hasItemResponse}
-		, HP_ {HP}
-		, greeting_{ greeting }
-		, canBeCloned_ { canBeCloned }
-		, isRecrutable_ {isRecrutable}
-	{};
+	;
 
 	~NPC() {};
 	

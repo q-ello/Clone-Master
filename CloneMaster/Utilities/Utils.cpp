@@ -29,24 +29,28 @@ std::string Utils::toLowerAndTrim(const std::string& s)
 bool Utils::toCompare(const std::string& a, const std::string& b)
 {
 	std::string lowA = toLowerAndTrim(a);
-	std::string lowB = toLower(b);
+	std::string lowB = toLowerAndTrim(b);
+
+	if (lowA == lowB)
+		return true;
+
 	std::string delimeter = " ";
 	size_t posB = lowB.find(delimeter);
 	size_t posA = lowA.find(delimeter);
-	if (posA != std::string::npos)
-	{
-		if (posB != std::string::npos)
-		{
-			return lowA.substr(posA + 1) == lowB.substr(posB + 1);
-		}
 
-		return lowA.substr(posA + 1) == lowB;
-	}
+	std::string shortA;
+	std::string shortB;
+	if (posA != std::string::npos)
+		shortA = lowA.substr(posA + 1);
+	else
+		shortA = lowA;
+
 	if (posB != std::string::npos)
-	{
-		return lowA == lowB.substr(posB + 1);
-	}
-	return lowA == lowB;
+		shortB = lowB.substr(posB + 1);
+	else
+		shortB = lowB;
+
+	return shortA == shortB;
 }
 
 void Utils::setColor(int col)

@@ -142,13 +142,7 @@ void Game::updateState(Instruction instruction)
 		move(instruction.goal);
 		break;
 	case F_ATTACK:
-		if (dmg_ == 0)
-		{
-			std::cout << "You really think you can take someone with bare hands?" << std::endl;
-			return;
-		}
-
-		if (instruction.goal == "")
+		if (instruction.goal == "" && currentEnemy_ != nullptr)
 		{
 			attack();
 			return;
@@ -631,7 +625,7 @@ void Game::take(const std::string& item)
 
 	Item* neededItem = currentRoom_->getItem(i);
 
-	if (item == "ñloning device")
+	if (item == "device")
 	{
 		canClone_ = true;
 		std::cout << "Now you are in your whole power!" << std::endl;
@@ -645,6 +639,7 @@ void Game::take(const std::string& item)
 	{
 		charges_++;
 		currentRoom_->deleteItem(i);
+		std::cout << "Taken." << std::endl;
 		return;
 	}
 
@@ -804,6 +799,11 @@ void Game::attack()
 	 
 	if (squad_.isEmpty())
 	{
+		if (dmg_ > 0)
+		{
+			std::cout << "You really think you can take someone with bare hands?" << std::endl;
+			return;
+		}
 		std::cout << "You attack him with your shard." << std::endl;
 	}
 	else
@@ -825,8 +825,8 @@ void Game::attack()
 
 	if (currentEnemy_->getName() == "Guard Andrew")
 	{
-		std::cout << "You sneak out cell key from his pocket." << std::endl;
-		openItem("Key");
+		std::cout << "You sneak out a cell key from his pocket." << std::endl;
+		openItem("cell Key");
 	}
 
 	isInCombat_ = false;
@@ -875,6 +875,12 @@ void Game::give(const std::string& item, const std::string& npc)
 	}
 
 	NPC* npcToGive = currentRoom_->getNPC(iNPC);
+
+	if (!npcToGive->isAwake())
+	{
+		std::cout << "What is the means of trying to give something to unconscious guy?" << std::endl;
+		return;
+	}
 
 	Utils::setColor(14);
 	std::cout << npcToGive->getName() << ": ";
@@ -961,8 +967,20 @@ void Game::clone(const std::string& name)
 		return;
 	}
 
-	NPC* clone = new NPC("Clone " + npcToClone->getName(), npcToClone->damage(), npcToClone->getHitChance(), npcToClone->getDescriptionAwake(),
-		npcToClone->getDescriptionUnconscious());
+	std::string delimeter = " ";
+
+	std::string oldName = npcToClone->getName();
+
+	std::string newName;
+
+	size_t pos = oldName.find(delimeter);
+
+	if (pos != std::string::npos)
+		newName = oldName.substr(pos + 1);
+	else
+		newName = oldName;
+
+	NPC* clone = new NPC("Clone " + newName, npcToClone->damage(), npcToClone->getHitChance());
 
 	charges_--;
 
@@ -1087,7 +1105,6 @@ void Game::open(int iTrigger, int iKey)
 	}
 
 	currentRoom_->deleteTrigger(iTrigger);
-	inventory_.deleteEntity(iKey);
 
 	openExit(trigger->getEntityName());
 
@@ -1169,7 +1186,6 @@ void Game::use(int iKey, int iTrigger)
 	}
 
 	currentRoom_->deleteTrigger(iTrigger);
-	inventory_.deleteEntity(iKey);
 
 	if (trigger->getType() == T_ITEM)
 	{

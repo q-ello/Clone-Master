@@ -120,7 +120,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		return;
 	}
 
-	if (n <= 2 && command[0] == "take")
+	if (n <= 3 && command[0] == "take")
 	{
 		inst.function = F_TAKE;
 		if (n == 1)
@@ -130,34 +130,23 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 		inst.goal = command[1];
+
+		if (n == 3)
+			inst.goal += " " + command[2];
+
 		return;
 	}
 
-	if (n <= 3 && command[0] == "pick")
-	{
-		inst.function = F_TAKE;
-		if (n == 1)
-		{
-			std::cout << "What do you wanna pick up?\n";
-			std::getline(std::cin, inst.goal);
-			return;
-		}
-		if (command[1] != "up")
-		{
-			inst.goal = command[1];
-			return;
-		}
-		inst.goal = command[2];
-		return;
-	}
-
-	if (n <= 2 && command[0] == "drop")
+	if (n <= 3 && command[0] == "drop")
 	{
 		inst.function = F_DROP;
-		inst.goal = "";
-		if (n == 2)
+		if (n == 1)
+			return;
+		inst.goal = command[1];
+
+		if (n == 3)
 		{
-			inst.goal = command[1];
+			inst.goal += " " + command[2];
 		}
 		return;
 	}
@@ -168,10 +157,9 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		return;
 	}
 
-	if (n <= 2 && command[0] == "examine")
+	if (n <= 3 && command[0] == "examine")
 	{
 		inst.function = F_EXAMINE;
-		inst.goal = "";
 		if (n == 1)
 		{
 			std::cout << "What do you want to examine?" << std::endl;
@@ -179,24 +167,29 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 		inst.goal = command[1];
+
+		if (n == 3)
+			inst.goal += " " + command[2];
 		return;
 	}
 
-	if (n <= 2 && command[0] == "move")
+	if (n <= 3 && command[0] == "move")
 	{
 		inst.function = F_MOVE;
-		inst.goal = "";
 		if (n == 1)
 		{
 			std::cout << "What do you want to move?" << std::endl;
 			std::getline(std::cin, inst.goal);
 			return;
 		}
+
 		inst.goal = command[1];
+		if (n == 3)
+			inst.goal += " " + command[2];
 		return;
 	}
 
-	if (n <= 2 && command[0] == "attack")
+	if (n <= 3 && command[0] == "attack")
 	{
 		inst.function = F_ATTACK;
 		if (n == 1)
@@ -205,10 +198,13 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		}
 
 		inst.goal = command[1];
+
+		if (n == 3)
+			inst.goal += " " + command[2];
 		return;
 	}
 
-	if (n <= 4 && command[0] == "give")
+	if (n <= 6 && command[0] == "give")
 	{
 		inst.function = F_GIVE;
 		if (n == 1)
@@ -216,21 +212,25 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 
-		inst.goal = command[1];
+		int i = 1;
 
+		for (; command[i] != "to" && i != n; i++)
+			inst.goal += " " + command[i];
 
-		if (n == 2)
+		if (n == i)
 		{
 			std::cout << "Whom do you want to give it to?" << std::endl;
 			std::getline(std::cin, inst.object);
 			return;
 		}
 
-		inst.object = command[n - 1];
+		for (++i; i != n; i++)
+			inst.object += " " + command[i];
+
 		return;
 	}
 
-	if (n <= 2 && command[0] == "clone")
+	if (n <= 3 && command[0] == "clone")
 	{
 		inst.function = F_CLONE;
 		if (n == 1)
@@ -240,10 +240,13 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 		inst.goal = command[1];
+
+		if (n == 3)
+			inst.goal += " " + command[2];
 		return;
 	}
 
-	if (n <= 4 && command[0] == "open")
+	if (n <= 6 && command[0] == "open")
 	{
 		inst.function = F_OPEN;
 		if (n == 1)
@@ -253,17 +256,21 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 
-		inst.goal = command[1];
+		int i = 1;
 
-		if (n > 2)
-		{
-			inst.object = command[n - 1];
-		}
+		for (; command[i] != "with" && i != n; i++)
+			inst.goal += " " + command[i];
+
+		if (n == i)
+			return;
+
+		for (++i; i != n; i++)
+			inst.object += " " + command[i];
 
 		return;
 	}
 
-	if (n <= 4 && command[0] == "use")
+	if (n <= 6 && command[0] == "use")
 	{
 		inst.function = F_USE;
 		if (n == 1)
@@ -271,21 +278,24 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 		}
 
-		inst.object = command[1];
+		int i = 1;
 
-		if (n < 3)
+		for (; command[i] != "on" && i != n; i++)
+			inst.object += " " + command[i];
+
+		if (n == i)
 		{
 			std::cout << "What do you want to use it on?" << std::endl;
 			std::getline(std::cin, inst.goal);
-			return;
 		}
 
-		inst.goal = command[n - 1];
+		for (++i; i != n; i++)
+			inst.goal += " " + command[i];
 
 		return;
 	}
 
-	if (n <= 2 && command[0] == "recruit")
+	if (n <= 3 && command[0] == "recruit")
 	{
 		inst.function = F_RECRUIT;
 
@@ -298,10 +308,13 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 
 		inst.goal = command[1];
 
+		if (n == 3)
+			inst.goal += " " + command[2];
+
 		return;
 	}
 
-	if (n <= 2 && command[0] == "leave")
+	if (n <= 3 && command[0] == "leave")
 	{
 		inst.function = F_LEAVE;
 
@@ -309,6 +322,9 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 			return;
 
 		inst.goal = command[1];
+
+		if (n == 3)
+			inst.goal += " " + command[2];
 
 		return;
 	}
