@@ -16,6 +16,62 @@ public:
 	static void setColor(int color);
 	//yey menu options!
 	static int menu(std::vector<std::string> options);
+	//helping to parse json
+	static const std::string findJsonString(std::string query, json jsonPart)
+	{
+		std::string dummy = "";
+		auto it = jsonPart.find(query);
+		
+		if (it != jsonPart.end() && (*it).is_string())
+		{
+			dummy = *it;
+		}
+
+		return dummy;
+	}
+
+	static const std::vector<std::string> findJsonVector(std::string query, json jsonPart)
+	{
+		std::vector<std::string> dummy{};
+		auto it = jsonPart.find(query);
+
+		if (it != jsonPart.end() && (*it).is_array())
+		{
+			dummy = *it;
+		}
+		else
+		{
+			dummy.push_back(*it);
+		}
+
+		return dummy;
+	}
+
+	static const int findJsonInt(std::string query, json jsonPart)
+	{
+		int dummy = 0;
+		auto it = jsonPart.find(query);
+
+		if (it != jsonPart.end() && (*it).is_number())
+		{
+			dummy = *it;
+		}
+
+		return dummy;
+	}
+
+	static const int findJsonBool(std::string query, json jsonPart)
+	{
+		bool dummy = false;
+		auto it = jsonPart.find(query);
+
+		if (it != jsonPart.end() && (*it).is_boolean())
+		{
+			dummy = *it;
+		}
+
+		return dummy;
+	}
 
 private:
 	static HANDLE hOut_;

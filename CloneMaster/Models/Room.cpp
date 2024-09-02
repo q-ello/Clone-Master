@@ -15,6 +15,15 @@ void Room::printRoomInfo()
 	Utils::setColor(7);
 	std::cout << description_ << std::endl;
 
+	for (Trigger* trigger : triggers_)
+	{
+		const std::string description = trigger->getDescription();
+		if (!description.empty())
+		{
+			std::cout << trigger->getDescription() << std::endl;
+		}
+	}
+
 	for (Item* item : items_)
 	{
 		if (item->isAvailable())
@@ -94,6 +103,11 @@ Trigger* Room::getTrigger(int i)
 
 void Room::deleteTrigger(int i)
 {
+	const std::string additionalInfo = triggers_[i]->getAdditionalInfo();
+	if (!additionalInfo.empty())
+	{
+		description_ += additionalInfo;
+	}
 	triggers_.erase(i + triggers_.begin());
 }
 
@@ -153,3 +167,4 @@ NPC* Room::isDangerous()
 	}
 	return possibleEnemy;
 }
+

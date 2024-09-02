@@ -7,9 +7,9 @@
 #include "Function.h"
 
 struct Instruction {
-	Function function;
-	std::string goal;
-	std::string object;
+	Function function = F_NONE;
+	std::string goal = "";
+	std::string object = "";
 };
 
 class Input

@@ -31,7 +31,9 @@ public:
 		const std::vector<std::string>& entityName = {},
 		TriggerAction action = T_NONE,
 		const std::string& neededItem = "",
-		TriggerType type = T_DUMMY
+		TriggerType type = T_DUMMY,
+		const std::string& inRoomDescription = "",
+		const std::string& infoOnTriggered = ""
 	)
 		: name_ {name}
 		, clue_ {clue}
@@ -39,7 +41,25 @@ public:
 		, action_{ action }
 		, neededItem_ {neededItem}
 		, type_ {type}
+		, inRoomDescription_ {inRoomDescription}
+		, infoOnTriggered_ {infoOnTriggered}
 	{};
+
+	Trigger(
+		const std::string& name,
+		const std::string& clue,
+		const std::string& inRoomDescription = "",
+		const std::string& infoOnTriggered = ""
+	)
+		: name_{ name }
+		, clue_{ clue }
+		, entityName_{}
+		, action_{ T_NONE }
+		, neededItem_{ "" }
+		, type_{ T_DUMMY }
+		, inRoomDescription_{ inRoomDescription }
+		, infoOnTriggered_{ infoOnTriggered }
+	{}
 
 	~Trigger() {};
 
@@ -71,6 +91,16 @@ public:
 		return neededItem_;
 	}
 
+	std::string getAdditionalInfo() const
+	{
+		return infoOnTriggered_;
+	}
+
+	std::string getDescription() const
+	{
+		return inRoomDescription_;
+	}
+
 private:
 	std::string name_;
 	std::string clue_;
@@ -78,6 +108,8 @@ private:
 	TriggerAction action_;
 	std::string neededItem_;
 	TriggerType type_;
+	std::string inRoomDescription_;
+	std::string infoOnTriggered_;
 };
 
 static std::map<std::string, TriggerAction> TriggerActionsToEnum

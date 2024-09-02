@@ -446,13 +446,8 @@ void Game::parseData(const json& data)
 {
 	for (auto& roomJson : data.at("rooms"))
 	{
-		std::string roomName = roomJson.at("name");
-		auto descIt = roomJson.find("description");
-		std::string roomDesc = "";
-		if (descIt != roomJson.end())
-		{
-			roomDesc = *descIt;
-		}
+		const std::string roomName = Utils::findJsonString("name", roomJson);
+		const std::string roomDesc = Utils::findJsonString("description", roomJson);
 		Room* newRoom = new Room(roomName, roomDesc);
 
 		for (auto& exitJson : roomJson.at("exits"))
@@ -465,9 +460,9 @@ void Game::parseData(const json& data)
 		{
 			for (auto& itemJson : roomJson.at("items"))
 			{
-				std::string itemName = itemJson.at("name");
-				std::string itemDesc = itemJson.at("description");
-				std::string itemClue = itemJson.at("clue");
+				std::string itemName = Utils::findJsonString("name", itemJson);
+				std::string itemDesc = Utils::findJsonString("description", itemJson);
+				std::string itemClue = Utils::findJsonString("clue", itemJson);
 				bool itemAvailable = itemJson.find("available") == itemJson.end();
 				newRoom->addItem(new Item(itemName, itemDesc, itemClue, itemAvailable));
 			}
@@ -476,36 +471,26 @@ void Game::parseData(const json& data)
 		{
 			for (auto& triggerJson : roomJson.at("triggers"))
 			{
-				std::string triggerName = triggerJson.at("name");
-				std::string triggerClue = triggerJson.at("clue");
+				const std::string triggerName = Utils::findJsonString("name", triggerJson);
+				const std::string triggerClue = Utils::findJsonString("clue", triggerJson);
+				const std::string triggerDescription = Utils::findJsonString("inRoomDescription", triggerJson);
+				const std::string additionalInfo = Utils::findJsonString("infoOnTriggered", triggerJson);
 				if (triggerJson.contains("trigger"))
 				{
 					json triggerInfo = triggerJson.at("trigger");
 					TriggerAction action = TriggerActionsToEnum.at(triggerInfo.at("action"));
-					std::string key = "";
-					auto keyIt = triggerInfo.find("key");
-					if (keyIt != triggerInfo.end())
-						key = *keyIt;
+					const std::string key = Utils::findJsonString("key", triggerInfo);
 					TriggerType type = TriggerTypesToEnum.at(triggerInfo.at("type"));
 
-					std::vector<std::string> names{};
+					const std::vector<std::string> names = Utils::findJsonVector("name", triggerInfo);
 
-					if (triggerInfo.at("name").is_string())
-					{
-						names.push_back(triggerInfo.at("name"));
-					}
-					else {
-						names = triggerInfo.at("name");
-					}
-					
-
-					Trigger* trig = new Trigger(triggerName, triggerClue, names, action, key, type);
+					Trigger* trig = new Trigger(triggerName, triggerClue, names, action, key, type, triggerDescription, additionalInfo);
 
 					newRoom->addTrigger(std::move(trig));
 					
 				}
 				else {
-					newRoom->addTrigger(new Trigger(triggerName, triggerClue));
+					newRoom->addTrigger(new Trigger(triggerName, triggerClue, triggerDescription, additionalInfo));
 				}
 			}
 		}
@@ -531,25 +516,18 @@ void Game::parseData(const json& data)
 	for (auto& npcJson : data.at("npcs"))
 	{
 		
-		std::string name = npcJson.at("name");
-		int HP = npcJson.at("hp");
-		int dmg = npcJson.at("dmg");
-		int hitChance = npcJson.at("hit_chance");
-		bool canBeCloned = npcJson.at("can_clone");
-		bool isRecrutable = npcJson.at("is_recruitable");
-		std::string inRoomAwake = npcJson.at("in_room_alive");
-		std::string inRoomUnconscious = npcJson.at("in_room_dead");
-		std::string greeting = npcJson.at("greeting");
-		std::string incorrectItemResponse = npcJson.at("incorrect_item_response");
-		std::string requiredItem = "";
-		std::string hasItemResponse = "";
-
-		auto reqItemIt = npcJson.find("required_item");
-		if (reqItemIt != npcJson.end())
-		{
-			requiredItem = *reqItemIt;
-			hasItemResponse = npcJson.at("has_item_response");
-		}
+		const std::string name = Utils::findJsonString("name", npcJson);
+		int HP = Utils::findJsonInt("hp", npcJson);
+		int dmg = Utils::findJsonInt("dmg", npcJson);
+		int hitChance = Utils::findJsonInt("hit_chance", npcJson);
+		bool canBeCloned = Utils::findJsonBool("can_clone", npcJson);
+		bool isRecrutable = Utils::findJsonBool("is_recruitable", npcJson); 
+		const std::string inRoomAwake = Utils::findJsonString("in_room_alive", npcJson); 
+		const std::string inRoomUnconscious = Utils::findJsonString("in_room_dead", npcJson); 
+		const std::string greeting = Utils::findJsonString("greeting", npcJson);
+		const std::string incorrectItemResponse = Utils::findJsonString("incorrect_item_response", npcJson); 
+		const std::string requiredItem = Utils::findJsonString("required_item", npcJson);
+		const std::string hasItemResponse = Utils::findJsonString("has_item_response", npcJson);
 
 		NPC* newNPC = new NPC(name, dmg, hitChance, inRoomAwake, inRoomUnconscious, incorrectItemResponse, requiredItem, hasItemResponse,
 			HP, greeting, canBeCloned, isRecrutable);
@@ -572,12 +550,12 @@ void Game::parseData(const json& data)
 			int hitChance = npcJson.at("hit_chance");
 			bool canBeCloned = npcJson.at("can_clone");
 			bool isRecrutable = npcJson.at("is_recruitable");
-			std::string inRoomAwake = npcJson.at("in_room_alive");
-			std::string inRoomUnconscious = npcJson.at("in_room_dead");
-			std::string greeting = npcJson.at("greeting");
-			std::string incorrectItemResponse = npcJson.at("incorrect_item_response");
-			std::string requiredItem = npcJson.at("required_item");
-			std::string hasItemResponse = npcJson.at("has_item_response");
+			const std::string inRoomAwake = npcJson.at("in_room_alive");
+			const std::string inRoomUnconscious = npcJson.at("in_room_dead");
+			const std::string greeting = npcJson.at("greeting");
+			const std::string incorrectItemResponse = npcJson.at("incorrect_item_response");
+			const std::string requiredItem = npcJson.at("required_item");
+			const std::string hasItemResponse = npcJson.at("has_item_response");
 
 			squad_.addEntity(new NPC(name, dmg, hitChance, inRoomAwake, inRoomUnconscious, incorrectItemResponse, requiredItem, hasItemResponse,
 				HP, greeting, canBeCloned, isRecrutable));

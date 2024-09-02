@@ -214,7 +214,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 
 		int i = 1;
 
-		for (; command[i] != "to" && i != n; i++)
+		for (; i != n && command[i] != "to"; i++)
 			inst.goal += " " + command[i];
 
 		if (n == i)
@@ -258,7 +258,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 
 		int i = 1;
 
-		for (; command[i] != "with" && i != n; i++)
+		for (;  i < n && command[i] != "with"; i++)
 			inst.goal += " " + command[i];
 
 		if (n == i)
@@ -280,7 +280,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 
 		int i = 1;
 
-		for (; command[i] != "on" && i != n; i++)
+		for (; i != n && command[i] != "on"; i++)
 			inst.object += " " + command[i];
 
 		if (n == i)
