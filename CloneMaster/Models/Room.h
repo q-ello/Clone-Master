@@ -10,8 +10,8 @@
 #include "NPC.h"
 
 struct Exit {
-	std::string name;
-	bool available;
+	std::string name = "";
+	bool available = true;
 };
 
 class Room

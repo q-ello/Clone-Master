@@ -28,7 +28,7 @@ public:
 	Trigger(
 		const std::string& name, 
 		const std::string& clue, 
-		const std::string& entityName = "",
+		const std::vector<std::string>& entityName = {},
 		TriggerAction action = T_NONE,
 		const std::string& neededItem = "",
 		TriggerType type = T_DUMMY
@@ -57,7 +57,7 @@ public:
 		return action_;
 	}
 
-	std::string getEntityName() const
+	std::vector<std::string> getEntitiesName() const
 	{
 		return entityName_;
 	}
@@ -71,10 +71,10 @@ public:
 		return neededItem_;
 	}
 
-protected:
+private:
 	std::string name_;
 	std::string clue_;
-	std::string entityName_;
+	std::vector<std::string> entityName_;
 	TriggerAction action_;
 	std::string neededItem_;
 	TriggerType type_;

@@ -325,7 +325,7 @@ void Game::save()
 
 				triggerInfo["type"] = TriggerTypesToString.at(trigger->getType());
 				triggerInfo["action"] = TriggerActionsToString.at(trigger->getAction());
-				triggerInfo["name"] = trigger->getEntityName();
+				triggerInfo["name"] = trigger->getEntitiesName();
 				if (trigger->getKey() != "")
 				{
 					triggerInfo["key"] = trigger->getKey();
@@ -486,11 +486,20 @@ void Game::parseData(const json& data)
 					auto keyIt = triggerInfo.find("key");
 					if (keyIt != triggerInfo.end())
 						key = *keyIt;
-					std::string entityName = triggerInfo.at("name");
-
 					TriggerType type = TriggerTypesToEnum.at(triggerInfo.at("type"));
 
-					Trigger* trig = new Trigger(triggerName, triggerClue, entityName, action, key, type);
+					std::vector<std::string> names{};
+
+					if (triggerInfo.at("name").is_string())
+					{
+						names.push_back(triggerInfo.at("name"));
+					}
+					else {
+						names = triggerInfo.at("name");
+					}
+					
+
+					Trigger* trig = new Trigger(triggerName, triggerClue, names, action, key, type);
 
 					newRoom->addTrigger(std::move(trig));
 					
@@ -605,7 +614,6 @@ void Game::help()
 	std::cout << "- use smth on smth/some other commands - sometimes you just need to give it a try" << std::endl;
 	std::cout << "- squad - look who is in your squad" << std::endl;
 	std::cout << "- clone sb - you're a clone master after all" << std::endl;
-	std::cout << "- talk to smb - enter the dialogue with some npc" << std::endl;
 	std::cout << "- give smth to sb - sometimes you can just negotiate" << std::endl;
 	std::cout << "- attack sb - you don't need to worry about the weapon" << std::endl;
 	std::cout << "- quit - quit game" << std::endl;
@@ -732,7 +740,7 @@ void Game::examine(const std::string& name)
 		{
 			currentRoom_->deleteTrigger(i);
 
-			openItem(trigger->getEntityName());
+			openItem(trigger->getEntitiesName()[0]);
 		}
 		return;
 	}
@@ -759,7 +767,10 @@ void Game::move(const std::string& name)
 		{
 			currentRoom_->deleteTrigger(i);
 			std::cout << "You moved the " << name << ".\n";
-			openExit(trigger->getEntityName());
+			for (auto& exit : trigger->getEntitiesName())
+			{
+				openExit(exit);
+			}
 			return;
 		}
 	}
@@ -1107,7 +1118,10 @@ void Game::open(int iTrigger, int iKey)
 
 	currentRoom_->deleteTrigger(iTrigger);
 
-	openExit(trigger->getEntityName());
+	for (auto& exit : trigger->getEntitiesName())
+	{
+		openExit(exit);
+	}
 
 	std::cout << "You opened the " << trigger->getName();
 }
@@ -1190,12 +1204,15 @@ void Game::use(int iKey, int iTrigger)
 
 	if (trigger->getType() == T_ITEM)
 	{
-		openItem(trigger->getEntityName());
+		openItem(trigger->getEntitiesName()[0]);
 	}
 
 	if (trigger->getType() == T_EXIT)
 	{
-		openExit(trigger->getEntityName());
+		for (auto& exit : trigger->getEntitiesName())
+		{
+			openExit(exit);
+		}
 		return;
 	}
 }
