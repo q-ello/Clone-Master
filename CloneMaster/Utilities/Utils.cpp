@@ -93,13 +93,22 @@ int Utils::menu(std::vector<std::string> options)
 
 	COORD currentPos = getCoords();
 
-	for (int i = 0; i <= n; i++)
+	auto sharedUserData = (BYTE*)0x7FFE0000;
+	if (*(ULONG*)(sharedUserData + 0x26c) > 10)
 	{
-		std::cout << std::endl;
-	}
+		for (int i = 0; i <= n; i++)
+		{
+			std::cout << std::endl;
+		}
 
-	if (currentPos.Y > 29 - n)
-		currentPos.Y = 29 - n;
+		CONSOLE_SCREEN_BUFFER_INFO csbi;
+		GetConsoleScreenBufferInfo(hOut_, &csbi);
+		int rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+		std::cout << rows << std::endl;
+
+		if (currentPos.Y > rows - n)
+			currentPos.Y = rows - n;
+	}
 
 	while (true)
 	{
