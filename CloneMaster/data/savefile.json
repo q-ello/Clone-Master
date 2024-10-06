@@ -1,13 +1,13 @@
 {
     "can_clone": false,
     "charges": 0,
-    "current": "Cell",
-    "dmg": 1,
+    "current": "Hideout",
+    "dmg": 0,
     "inventory": [
         {
-            "clue": "You don't have the healthiest habits. Neither does the guard, Andrew.",
-            "description": "There is a pack of cigarettes laying around.",
-            "name": "Cigarettes"
+            "clue": "Take it and you will sleep soundly",
+            "description": "You see drugged cigarettes",
+            "name": "Drug"
         }
     ],
     "npcs": [
@@ -151,7 +151,7 @@
     ],
     "rooms": [
         {
-            "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole. Garbage is piling up in the corner.",
+            "description": "They keep you in solitary confinement.\nYour cell is small. Under your bed there is a hole leading down",
             "exits": [
                 {
                     "available": false,
@@ -164,6 +164,12 @@
                 }
             ],
             "items": [
+                {
+                    "available": false,
+                    "clue": "A shard of a ceramic plate. It is sharp.",
+                    "description": "You see a sharp ceramic shard.",
+                    "name": "shard"
+                },
                 {
                     "available": false,
                     "clue": "You could use it to unlock the cell door",
@@ -188,6 +194,17 @@
                 {
                     "clue": "A hole leads down to a hideout you've made while the guards weren't looking.",
                     "name": "hole"
+                },
+                {
+                    "clue": "There is a shard of a ceramic plate in garbage.",
+                    "name": "Garbage",
+                    "trigger": {
+                        "action": "examine",
+                        "name": [
+                            "shard"
+                        ],
+                        "type": "item"
+                    }
                 }
             ]
         },
@@ -220,7 +237,7 @@
             "triggers": null
         },
         {
-            "description": "You are now in the middle of the Hallway. You can go east or west, or you can return to your Cell. If you would ever need that.",
+            "description": "You are now in the middle of the Hallway. You can go east or west, or you can return south to your Cell. If you would ever need that.",
             "exits": [
                 {
                     "direction": "east",
@@ -261,7 +278,7 @@
             ]
         },
         {
-            "description": "You've reached the end of the Hallway. Behind a door with a fingerprint reading panel you see a staircase leading up.",
+            "description": "You've reached the west end of the Hallway. Behind a door there is a staircase leading up.",
             "exits": [
                 {
                     "direction": "east",
@@ -297,7 +314,7 @@
             ]
         },
         {
-            "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things. A periodic table of elements hangs on the wall.",
+            "description": "You have descended down, into your small hideout.\nHere you make plans and keep some of your things.",
             "exits": [
                 {
                     "direction": "west",
@@ -314,18 +331,12 @@
                     "clue": "In a place like this, you need a spark in your life.",
                     "description": "You see your lighter.",
                     "name": "Lighter"
-                },
-                {
-                    "available": false,
-                    "clue": "Take it and you will sleep soundly",
-                    "description": "You see drugged cigarettes",
-                    "name": "Drug"
                 }
             ],
             "name": "Hideout",
             "triggers": [
                 {
-                    "clue": "The periodic table hides the ventilation leading to the staff room",
+                    "clue": "The periodic table hides the ventilation leading up to the staff room",
                     "name": "Periodic Table",
                     "trigger": {
                         "action": "move",
@@ -333,18 +344,6 @@
                             "Staff"
                         ],
                         "type": "exit"
-                    }
-                },
-                {
-                    "clue": "Take enough of these and you will sleep soundly.",
-                    "name": "Sedatives",
-                    "trigger": {
-                        "action": "use",
-                        "key": "Cigarettes",
-                        "name": [
-                            "drug"
-                        ],
-                        "type": "item"
                     }
                 }
             ]
@@ -430,7 +429,7 @@
             "triggers": null
         },
         {
-            "description": "You enter the staff room on the 2nd floor. Luckily, no one is here.\nThe door is locked by a fingerprint reader panel. Inside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
+            "description": "You enter the staff room on the 2nd floor. Luckily, no one is here.\nYou see doors to the north and south of you. They lead to Upper Hallway and Lower Hallway respectively.\nInside the staff room you see multiple lockers, with guards' personal possessions. In the middle of the room is a cluttered table.",
             "exits": [
                 {
                     "available": false,

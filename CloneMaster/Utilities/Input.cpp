@@ -151,7 +151,7 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		return;
 	}
 
-	if (n == 1 && command[0] == "quit")
+	if (n == 1 && (command[0] == "quit" || command[0] == "q"))
 	{
 		inst.function = F_QUIT;
 		return;
@@ -287,10 +287,11 @@ void Input::DetermineCommand(const std::vector<std::string>& command, int n, Ins
 		{
 			std::cout << "What do you want to use it on?" << std::endl;
 			std::getline(std::cin, inst.goal);
+			return;
 		}
 
 		for (++i; i != n; i++)
-			inst.goal += " " + command[i];
+			inst.goal += command[i] + " ";
 
 		return;
 	}

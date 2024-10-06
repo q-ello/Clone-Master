@@ -73,6 +73,8 @@ public:
 		return dummy;
 	}
 
+	static void getWindowsVersion();
+
 private:
 	static HANDLE hOut_;
 	static std::string toLower(const std::string& s);
@@ -82,6 +84,7 @@ private:
 	static void gotoxy(int x, int y);
 	//hide or show cursor
 	static void showCursor(bool show);
+	static int _version;
 };
 
 

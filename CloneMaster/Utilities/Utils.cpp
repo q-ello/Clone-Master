@@ -1,5 +1,12 @@
 #include "Utils.h"
 
+void Utils::getWindowsVersion()
+{
+	std::ifstream f("README.txt");
+	f >> _version;
+	f.close();
+}
+
 std::string Utils::toLower(const std::string& s)
 {
 	std::string lower = "";
@@ -93,8 +100,7 @@ int Utils::menu(std::vector<std::string> options)
 
 	COORD currentPos = getCoords();
 
-	auto sharedUserData = (BYTE*)0x7FFE0000;
-	if (*(ULONG*)(sharedUserData + 0x26c) > 10)
+	if (_version > 10)
 	{
 		for (int i = 0; i <= n; i++)
 		{
@@ -104,7 +110,6 @@ int Utils::menu(std::vector<std::string> options)
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
 		GetConsoleScreenBufferInfo(hOut_, &csbi);
 		int rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-		std::cout << rows << std::endl;
 
 		if (currentPos.Y > rows - n)
 			currentPos.Y = rows - n;
@@ -140,3 +145,4 @@ int Utils::menu(std::vector<std::string> options)
 }
 
 HANDLE Utils::hOut_ = GetStdHandle(STD_OUTPUT_HANDLE);
+int Utils::_version = 11;

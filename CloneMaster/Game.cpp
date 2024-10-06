@@ -17,6 +17,7 @@ void Game::initWorld()
 	std::ifstream f("data/data.json");
 	json data = json::parse(f);
 	parseData(data);
+	Utils::getWindowsVersion();
 }
 
 void Game::run()
@@ -47,8 +48,8 @@ void Game::printIntroduction()
 {
 	std::cout << "They said your experiments were illegal and named you a madman. "
 		<< "They locked you up on an underground military base, took away your precious inventions. "
-		<< "Feeble minds!They shall never understand… You will show them! " << std::endl
-		<< "But first you need to get out of here and get your equipment back…" << std::endl << std::endl;
+		<< "Feeble minds! They shall never understand... You will show them! " << std::endl
+		<< "But first you need to get out of here and get your equipment back..." << std::endl << std::endl;
 }
 
 void Game::updateState(Instruction instruction)
@@ -586,7 +587,7 @@ void Game::help()
 	std::cout << "- restore - restore your progress" << std::endl;
 	std::cout << "- l/look - look around the room you currently in" << std::endl;
 	std::cout << "- i/inventory - look in your inventory" << std::endl;
-	std::cout << "- take/pick up smth - put something in your inventory" << std::endl;
+	std::cout << "- take smth - put something in your inventory" << std::endl;
 	std::cout << "- drop smth - drop something from your inventory back into the room" << std::endl;
 	std::cout << "- examine smth - maybe you could find out some clues ;)" << std::endl;
 	std::cout << "- use smth on smth/some other commands - sometimes you just need to give it a try" << std::endl;
@@ -1174,7 +1175,7 @@ void Game::use(int iKey, int iTrigger)
 
 	if (!Utils::toCompare(trigger->getKey(), item->getName()))
 	{
-		std::cout << "You cannot use " << item->getName() << " on " << trigger->getName() << ".\n";
+		std::cout << "You cannot use " << item->getName() << " on " << trigger->getName() << "\n";
 		return;
 	}
 
@@ -1183,6 +1184,7 @@ void Game::use(int iKey, int iTrigger)
 	if (trigger->getType() == T_ITEM)
 	{
 		openItem(trigger->getEntitiesName()[0]);
+		inventory_.deleteEntity(iKey);
 	}
 
 	if (trigger->getType() == T_EXIT)
@@ -1191,6 +1193,7 @@ void Game::use(int iKey, int iTrigger)
 		{
 			openExit(exit);
 		}
+		inventory_.deleteEntity(iKey);
 		return;
 	}
 }
