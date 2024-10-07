@@ -103,10 +103,10 @@ Trigger* Room::getTrigger(int i)
 
 void Room::deleteTrigger(int i)
 {
-	const std::string additionalInfo = triggers_[i]->getAdditionalInfo();
+	const std::string& additionalInfo = triggers_[i]->getAdditionalInfo();
 	if (!additionalInfo.empty())
 	{
-		description_ += additionalInfo;
+		description_ += " " + additionalInfo;
 	}
 	triggers_.erase(i + triggers_.begin());
 }

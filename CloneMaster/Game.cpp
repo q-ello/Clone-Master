@@ -718,8 +718,10 @@ void Game::examine(const std::string& name)
 		if (trigger->getAction() == T_EXAMINE)
 		{
 			currentRoom_->deleteTrigger(i);
-
-			openItem(trigger->getEntitiesName()[0]);
+			for (auto& item : trigger->getEntitiesName())
+			{
+				openItem(item);
+			}
 		}
 		return;
 	}
@@ -1102,7 +1104,7 @@ void Game::open(int iTrigger, int iKey)
 		openExit(exit);
 	}
 
-	std::cout << "You opened the " << trigger->getName();
+	std::cout << "You opened the " << trigger->getName() << std::endl;
 }
 
 void Game::openExit(const std::string& exit)
@@ -1183,7 +1185,10 @@ void Game::use(int iKey, int iTrigger)
 
 	if (trigger->getType() == T_ITEM)
 	{
-		openItem(trigger->getEntitiesName()[0]);
+		for (auto& item : trigger->getEntitiesName())
+		{
+			openItem(item);
+		}
 		inventory_.deleteEntity(iKey);
 	}
 
