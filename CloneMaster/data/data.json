@@ -240,7 +240,7 @@
       "triggers": [
         {
           "name": "Periodic Table",
-          "clue": "The periodic table hides the ventilation leading up to the staff room",
+          "clue": "The periodic table hides the ventilation leading up to the staff room.",
           "inRoomDescription": "A periodic table of elements hangs on the wall.",
           "infoOnTriggered": "After you have moved the periodic table, you see an open vent leading up to the staff room.",
           "trigger": {
@@ -293,21 +293,21 @@
         {
           "name": "Pills",
           "clue": "Sclerosis pills prescribed to guard Andrew. He seems to forget to take them.",
-          "description": "You see a blister pack of sclerosis pills",
+          "description": "You see a blister pack of sclerosis pills.",
           "available": false
         },
 
         {
           "name": "Reminders",
           "clue": "'Don't forget to call Annie. Don't forget to watch the prisoner. Don't forget to buy groceries...', you read.",
-          "description": "You see a bunch of reminders guard Andrew wrote to himself",
+          "description": "You see a bunch of reminders guard Andrew wrote to himself.",
           "available": false
         }
       ],
       "triggers": [
         {
           "name": "Fingerprint reading panel",
-          "clue": "A fingerprint of an authorized employee can open it",
+          "clue": "A fingerprint of an authorized employee can open it.",
           "inRoomDescription": "You see a fingerprint reading panel between the doors.",
           "infoOnTriggered": "The fingerprint reading panel is now unlocked.",
           "trigger": {
@@ -331,7 +331,7 @@
         },
         {
           "name": "locker",
-          "clue": "You find a pack of sclerosis pills and a LOT of reminders. Great.",
+          "clue": "This is a locker belonging to guard Andrew. Great.",
           "trigger": {
             "type": "item",
             "name": [ "pills", "reminders" ],
@@ -376,8 +376,8 @@
       "items": [
         {
           "name": "fingerprint",
-          "clue": "You could use the fingerprint to unlock the door in the Staff room",
-          "description": "You see a piece of duct tape with a fingerprint",
+          "clue": "You could use the fingerprint to unlock the door in the Staff room.",
+          "description": "You see a piece of duct tape with a fingerprint.",
           "available": false
         }
       ],
@@ -415,13 +415,13 @@
         {
           "name": "Charge",
           "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
-          "description": "You see a charge to your cloning device"
+          "description": "You see a charge to your cloning device!"
         }
       ],
       "triggers": [
         {
           "name": "Fingerprint reading panel",
-          "clue": "A fingerprint of an authorized employee can open it",
+          "clue": "A fingerprint of an authorized employee can open it.",
           "inRoomDescription": "You see a fingerprint reading panel next to the door.",
           "infoOnTriggered": "The fingerprint reading panel is now unlocked.",
           "trigger": {
@@ -446,11 +446,11 @@
         {
           "name": "Charge",
           "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
-          "description": "You see a charge to your cloning device"
+          "description": "You see a charge to your cloning device."
         },
         {
           "name": "Cloning Device",
-          "clue": "Your cloning device allows you to clone people",
+          "clue": "Your cloning device allows you to clone people.",
           "description": "You see your most precious cloning device. You must take it now!"
         },
         {
