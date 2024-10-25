@@ -26,13 +26,32 @@
       "dmg": 1,
       "can_clone": true,
       "is_recruitable": true,
+      "required_item": "Panic medication",
       "greeting": "Oh my god! The guards are everywhere! Don't let me die!",
+      "has_item_response": "D-do you think this will help me? Anyway, I should try to be a better man! Please take this plushie - I'll try to do without it!",
       "incorrect_item_response": "What is this?! No, this is dangerous, I won't take it!",
       "in_room_alive": "You see Prisoner William. He looks like he's about to cry.",
       "in_room_dead": "You see the body of William.",
 
       "rooms": [
         "Upper Hallway 1"
+      ]
+    },
+
+    {
+      "name": "Prisoner James",
+      "hp": 1,
+      "hit_chance": 10,
+      "dmg": 1,
+      "can_clone": true,
+      "is_recruitable": false,
+      "greeting": "This place isn't too bad. I don't have to go to work, and they bring me food!",
+      "incorrect_item_response": "Eh? I don't think I'm allowed to keep that, so I'll pass. Don't wanna go to the solitary confinement, ya know?",
+      "in_room_alive": "You see Prisoner James. He seems content.",
+      "in_room_dead": "You see the body of James.",
+
+      "rooms": [
+        "Lower Hallway 3"
       ]
     },
 
@@ -80,7 +99,9 @@
       "dmg": 5,
       "can_clone": true,
       "is_recruitable": false,
+      "required_item": "Plushie duck",
       "greeting": "YOU SCUM! I shall make you regret escaping that damned cell!",
+      "has_item_response": "No-no-no-no! Please take this damned thing away from me!!!",
       "incorrect_item_response": "Hahaha! The attempts to bribe me will not change your fate!",
       "in_room_alive": "You see Guard Kevin. Something about him seems off.",
       "in_room_dead": "You see the body of Kevin.",
@@ -97,7 +118,9 @@
       "dmg": 3,
       "can_clone": true,
       "is_recruitable": false,
+      "required_item": "Incriminating paper",
       "greeting": "Do not resist. I don't want to do more than necessary.",
+      "has_item_response": "How did you get this?! Please, just give it to me and don't tell anyone - I'll let you pass!",
       "incorrect_item_response": "Back off!",
       "in_room_alive": "You see Guard Bob.",
       "in_room_dead": "You see the body of Bob.",
@@ -298,6 +321,14 @@
         },
 
         {
+          "name": "Incriminating paper",
+          "clue": "This is evidence of guard Bob's illegal activities. Makes you wonder how Andrew got this, and what he was planning to do with it.",
+          "description": "You see an incriminating paper.",
+          "available": false
+        },
+
+
+        {
           "name": "Reminders",
           "clue": "'Don't forget to call Annie. Don't forget to watch the prisoner. Don't forget to buy groceries...', you read.",
           "description": "You see a bunch of reminders guard Andrew wrote to himself.",
@@ -334,7 +365,7 @@
           "clue": "This is a locker belonging to guard Andrew. Great.",
           "trigger": {
             "type": "item",
-            "name": [ "pills", "reminders" ],
+            "name": [ "pills", "reminders", "incriminating paper" ],
             "action": "examine"
           }
         }
@@ -499,6 +530,14 @@
           "name": "Upper Hallway 2",
           "direction": "east"
         }
+      ],
+      "items": [
+        {
+          "name": "Plushie Duck",
+          "clue": "A soft yellow duck toy.",
+          "description": "You see a plushie duck.",
+          "available": false
+        }
       ]
     },
     {
@@ -526,7 +565,13 @@
         {
           "name": "Charge",
           "clue": "One charge to your cloning device. Will allow you to use your cloning device once.",
-          "description": "You see a charge to your cloning device"
+          "description": "You see a charge to your cloning device."
+        },
+
+        {
+          "name": "Panic medication",
+          "clue": "Panic attack pills prescribed to Guard Kevin in order to help him with Xanthophobia - a fear of color yellow.",
+          "description": "You see a pack of Panic medication."
         }
       ]
     },
