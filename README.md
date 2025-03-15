@@ -1,4 +1,4 @@
-A console game, very similar to Zork.
+A console game, very similar to Zork. Made as school project.
 
 What is the plot: you are a scientist that came up with cloning, but, well, for some reasong they put you into the cell because of it. You certainly need to escape.
 
